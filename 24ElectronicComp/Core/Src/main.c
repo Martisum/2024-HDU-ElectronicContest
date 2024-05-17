@@ -25,6 +25,12 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "DS18B20.h"
+#include "menu.h"
+#include "stdio.h"
+#include "oled.h"
+
+struct page p0, p1, p2, p3, p4, p5, p6;
+void menu_init(void);
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -91,7 +97,10 @@ int main(void)
   MX_I2C1_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
+  printf("SYSTEM START\r\n");
 
+  oled_init();
+  menu_init();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -101,6 +110,13 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+    MenuCmd(key_scan());
+    if (navigate[cntpage]->dymantic_page)
+    {
+      MenuRender(0);
+      HAL_Delay(100);
+    }
+    HAL_Delay(5);
   }
   /* USER CODE END 3 */
 }
@@ -151,7 +167,14 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+void menu_init(void)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+{
+  add_subpage(&p0, "function", &p1);
+  add_subpage(&p0, "pid", &p2);
+  add_subpage(&p0, "state", &p3);
 
+  MenuInit(&p0);
+}
 /* USER CODE END 4 */
 
 /**
