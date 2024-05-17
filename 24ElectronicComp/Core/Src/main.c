@@ -23,7 +23,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "DS18B20.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/

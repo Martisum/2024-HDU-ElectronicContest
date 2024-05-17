@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "*.ino": "plaintext",
+        "ds18b20.h": "c"
+    }
+}
