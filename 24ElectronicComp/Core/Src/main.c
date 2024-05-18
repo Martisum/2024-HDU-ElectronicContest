@@ -20,6 +20,7 @@
 #include "main.h"
 #include "adc.h"
 #include "dac.h"
+#include "dma.h"
 #include "i2c.h"
 #include "tim.h"
 #include "usart.h"
@@ -75,26 +76,17 @@ void sin_wave_gen(void)
   oled_clear();
   oled_show_string(0, 0, "sin_wave_gen()");
   HAL_TIM_Base_Start_IT(&htim10);
+  HAL_TIM_Base_Start_IT(&htim7);
   global_wave_type=1;
   __HAL_TIM_SET_AUTORELOAD(&htim10, global_freq);
 
   while (1)
   {
-    wave_index++;
-    wave_i++;
-    if(wave_index>=POINTS) wave_index=0; 
-    if(wave_i<128){
-      wave_point_add(wave_i,sine_oled_wave[wave_index]);
-    }else{
-      wave_point_add(127,sine_oled_wave[wave_index]);
-      refresh_wave(0,127);
-    }
-
-    HAL_Delay(10);
+    HAL_Delay(5);
     if (ADCY > MAX_ADC_VAL) {
       HAL_Delay(KEY_DelayTime);
       if (ADCY > MAX_ADC_VAL) {
-        global_wave_type=0;
+          global_wave_type=0;
           HAL_TIM_Base_Stop_IT(&htim10);
           MenuRender(1);
           return;
@@ -105,26 +97,16 @@ void sin_wave_gen(void)
 
 void square_wave_gen(void)
 {
-  uint8_t wave_index=0;
-  uint8_t wave_i=0;
-
   oled_clear();
   oled_show_string(0, 0, "square_wave_gen()");
   HAL_TIM_Base_Start_IT(&htim10);
+  HAL_TIM_Base_Start_IT(&htim7);
   global_wave_type=2;
   __HAL_TIM_SET_AUTORELOAD(&htim10, global_freq);
   while (1)
   {
-    wave_index++;
-    wave_i++;
-    if(wave_index>=POINTS) wave_index=0; 
-    if(wave_i<128){
-      wave_point_add(wave_i,square_oled_wave[wave_index]);
-    }else{
-      wave_point_add(127,square_oled_wave[wave_index]);
-      refresh_wave(0,127);
-    }
-    HAL_Delay(10);
+    oled_show_string(0,0,"sine_wave");
+    HAL_Delay(5);
 
     if (ADCY > MAX_ADC_VAL) {
       HAL_Delay(KEY_DelayTime);
@@ -201,6 +183,7 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_I2C1_Init();
   MX_USART1_UART_Init();
   MX_ADC1_Init();
@@ -208,6 +191,7 @@ int main(void)
   MX_TIM7_Init();
   MX_DAC_Init();
   MX_TIM10_Init();
+  MX_USART3_UART_Init();
   /* USER CODE BEGIN 2 */
   printf("SYSTEM START\r\n");
   oled_init();
@@ -218,6 +202,7 @@ int main(void)
   HAL_DAC_Start(&hdac,DAC_CHANNEL_1);
   HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_3);
   __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_3, HORIZON_PWM);
+  HAL_UARTEx_ReceiveToIdle_DMA(&huart3,rx_buf,127);			//�?启DMA空闲接收中断
   spd_pid_init();
   /* USER CODE END 2 */
 

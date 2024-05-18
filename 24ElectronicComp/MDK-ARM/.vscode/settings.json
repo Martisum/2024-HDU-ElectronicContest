@@ -11,7 +11,8 @@
         "motor.h": "c",
         "string.h": "c",
         "tim.h": "c",
-        "math.h": "c"
+        "math.h": "c",
+        "stm32f4xx_it.h": "c"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }
