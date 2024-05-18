@@ -6,7 +6,7 @@
 #include "oled.h"
 #include "math.h"
 
-float spd_kp=1,spd_ki=0,spd_kd=2;
+float spd_kp=1,spd_ki=0,spd_kd=0;
 float dis_kp=1,dis_ki=0,dis_kd=2;
 
 PID speed,location;
@@ -18,9 +18,9 @@ PID speed,location;
 //47  +2.6 deg      99 -2.6 deg
 #define UP_DEG_PWM 99
 #define DOWN_DEG_PWM 47
-#define HORIZON_DEG_PWM 82
+#define HORIZON_DEG_PWM 80
 
-uint16_t HORIZON_PWM=70;
+uint16_t HORIZON_PWM=80;
 
 void spd_pid_init(){
     speed.PS=spd_kp;
@@ -45,17 +45,19 @@ void set_loc(uint16_t tar_loc,uint16_t now_loc){
 
 //caculate the pwm_out only! Need to set pwm actually by set_servo_angle()
 void spd_pid(int16_t spd,int now_spd){
+    // if(now_spd >=5 || now_spd <=-5)  speed.PS=spd_kp;
+    // else speed.PS=spd_kp*0.5;
     speed.set_targetS=spd;
-    speed.now_error=speed.set_targetS-now_spd;
+    speed.now_error= now_spd - speed.set_targetS;
 
     speed.sum_error+=speed.now_error;
     if(speed.sum_error>100) speed.sum_error=100;
     else if(speed.sum_error<-100) speed.sum_error=-100;
 
-    //说明目标值是大的，pwm要正着给
-    speed.pwm_out=speed.PS*speed.now_error+speed.DS*(speed.now_error-speed.pre_error);
+    //说锟斤拷目锟斤拷值锟角达拷模锟絧wm要锟斤拷锟脚革拷
+    speed.pwm_out=-1*(speed.PS*speed.now_error+speed.DS*(speed.now_error-speed.pre_error));
     if(speed.pwm_out>1000) speed.pwm_out=1000;
-    else if(speed.pwm_out<0) speed.pwm_out=0;
+    else if(speed.pwm_out< -100) speed.pwm_out=0;
 
     speed.pre_error=speed.now_error;
 }
@@ -69,10 +71,11 @@ void set_servo_angle(int16_t angle){
         }
         
     }else{
-        if(angle+HORIZON_DEG_PWM<DOWN_DEG_PWM){
+        if(angle*2+HORIZON_DEG_PWM<DOWN_DEG_PWM){
             __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_3, DOWN_DEG_PWM);
         }else{
-            __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_3, angle*(float)((HORIZON_DEG_PWM-DOWN_DEG_PWM)/(UP_DEG_PWM-HORIZON_DEG_PWM))+HORIZON_PWM);
+            // __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_3, angle*(float)((float)((float)HORIZON_DEG_PWM-(float)DOWN_DEG_PWM)/(float)((float)UP_DEG_PWM-(float)HORIZON_DEG_PWM))+HORIZON_PWM);
+            __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_3, angle*2+HORIZON_PWM);
         }
     }
 }

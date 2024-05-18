@@ -125,6 +125,7 @@ void angle_confirm(void)
   oled_clear();
   oled_show_string(0, 0, "angle_confirm()");
   __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_3, HORIZON_PWM);
+  
   while (1)
   {
     oled_show_uint(0,1,HORIZON_PWM,5);
@@ -150,6 +151,32 @@ void angle_confirm(void)
           HORIZON_PWM++;
         }
     }
+  }
+}
+
+void speed_control(void)
+{
+  oled_clear();
+  oled_show_string(0, 0, "speed_control()");
+  __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_3, HORIZON_PWM);
+  HAL_TIM_Base_Start_IT(&htim7);
+  HAL_UARTEx_ReceiveToIdle_DMA(&huart3,rx_buf,127);			//�??启DMA空闲接收中断
+  while (1)
+  {
+    oled_show_int(0,1,speed.now_error,5);
+    oled_show_int(0,2,speed.pre_error,5);
+    oled_show_int(0,3,speed.pwm_out,5);
+    HAL_Delay(10);
+
+    if (ADCY > MAX_ADC_VAL) {
+      HAL_Delay(KEY_DelayTime);
+      if (ADCY > MAX_ADC_VAL) {
+        HAL_TIM_Base_Stop_IT(&htim7);
+        MenuRender(1);
+        return;
+      }
+    }
+    
   }
 }
 /* USER CODE END 0 */
@@ -202,7 +229,6 @@ int main(void)
   HAL_DAC_Start(&hdac,DAC_CHANNEL_1);
   HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_3);
   __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_3, HORIZON_PWM);
-  HAL_UARTEx_ReceiveToIdle_DMA(&huart3,rx_buf,127);			//�?启DMA空闲接收中断
   spd_pid_init();
   /* USER CODE END 2 */
 
@@ -274,6 +300,7 @@ void menu_init(void)
   add_func(&p0, "<sin_wave_gen>", sin_wave_gen);
   add_func(&p0, "<square_wave_gen>", square_wave_gen);
   add_func(&p0, "<angle_confirm>", angle_confirm);
+  add_func(&p0, "<speed_control>", speed_control);
   add_subpage(&p0, "<pid>", &p1);
   add_subpage(&p0, "<param>", &p2);
 

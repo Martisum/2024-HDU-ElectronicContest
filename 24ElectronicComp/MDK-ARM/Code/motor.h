@@ -7,9 +7,9 @@
 #define PI 3.1415926
 
 /*
-1号电机使用TIM8_CH1，使用TIM1的encoder
-2号电机使用TIM8_CH2，使用TIM2的encoder
-......以此类推
+1锟脚碉拷锟绞癸拷锟絋IM8_CH1锟斤拷使锟斤拷TIM1锟斤拷encoder
+2锟脚碉拷锟绞癸拷锟絋IM8_CH2锟斤拷使锟斤拷TIM2锟斤拷encoder
+......锟皆达拷锟斤拷锟斤拷
 */
 
 typedef struct {
@@ -28,6 +28,7 @@ typedef struct {
     int16_t pwm_out;
 } PID;
 
+extern PID speed,location;
 extern float spd_kp,spd_ki,spd_kd;
 extern float dis_kp,dis_ki,dis_kd;
 extern uint16_t HORIZON_PWM;

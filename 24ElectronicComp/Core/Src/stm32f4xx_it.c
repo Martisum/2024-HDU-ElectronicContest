@@ -26,6 +26,8 @@
 #include "geometry.h"
 #include "dac.h"
 #include "stdio.h"
+#include "motor.h"
+#include "oled.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -45,7 +47,11 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
-
+int16_t X_now = 0;
+int16_t X_last = 0;
+int16_t Y_now=0;
+int16_t Y_last=0;
+int16_t x_speed=0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -322,7 +328,10 @@ void TIM7_IRQHandler(void)
   /* USER CODE END TIM7_IRQn 0 */
   HAL_TIM_IRQHandler(&htim7);
   /* USER CODE BEGIN TIM7_IRQn 1 */
-  
+  x_speed=(X_last-X_now);//单位：mm/s
+  X_last=X_now;
+  spd_pid(0,x_speed);
+  set_servo_angle(speed.pwm_out);
   /* USER CODE END TIM7_IRQn 1 */
 }
 
@@ -347,9 +356,30 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef*huart,uint16_t Size){
 	if(huart == &huart3){
 		HAL_UART_DMAStop(huart);												 //暂停DMA接收数据
 		rx_buf[Size] = '\0';														 //接收数据末尾添加字符串结束符
-    printf("rx_buf:%s\r\n",rx_buf);											 //打印接收到的数据
+    if(rx_buf[0]=='['){//解包
+      uint8_t i=1;
+      int16_t pois_x=0;
+      int16_t pois_y=0;
+      while(rx_buf[i]>='0' && rx_buf[i]<='9'){
+        pois_x=10*pois_x+rx_buf[i]-'0';
+        i++;
+      }
+      if(rx_buf[i]==',') i++;
+      while(rx_buf[i]>='0' && rx_buf[i]<='9'){
+        pois_y=10*pois_y+rx_buf[i]-'0';
+        i++;
+      }
+      if(rx_buf[i]==']'){
+        if(pois_y>=60 && pois_y<=80)
+        {
+            X_now=pois_x;
+            Y_now=pois_y;
+            printf("X:%d,Y:%d\r\n",X_now,Y_now);
+        }
+      }
+    }
 		__HAL_UNLOCK(huart);														 //串口解锁
-		HAL_UARTEx_ReceiveToIdle_DMA(huart,rx_buf,127);  //重新�?始接�?
+		HAL_UARTEx_ReceiveToIdle_DMA(huart,rx_buf,127);  //重新�??始接�??
 	}
 }
 /* USER CODE END 1 */
