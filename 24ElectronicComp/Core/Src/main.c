@@ -100,15 +100,14 @@ int main(void)
   MX_I2C1_Init();
   MX_USART1_UART_Init();
   MX_ADC1_Init();
-  MX_ADC2_Init();
   MX_USART2_UART_Init();
   MX_TIM2_Init();
   MX_TIM7_Init();
   /* USER CODE BEGIN 2 */
   printf("SYSTEM START\r\n");
-
   oled_init();
   menu_init();
+  HAL_ADC_Start_IT(&hadc1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -119,14 +118,13 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
     MenuCmd(key_scan());
-    if (navigate[cntpage]->dymantic_page)
+    if (navigate[cntpage]->dymantic_page)//如果为动态页
     {
-      MenuRender(0);
-      HAL_Delay(100);
+        MenuRender(0);
+        HAL_Delay(100);
     }
-    HAL_Delay(5);
   }
-  /* USER CODE END 3 */
+    /* USER CODE END 3 */
 }
 
 /**

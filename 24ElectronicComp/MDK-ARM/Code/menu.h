@@ -2,6 +2,10 @@
 #define __MENU_H
 #include "main.h"
 
+#define MAX_ADC_VAL 3000
+#define MIN_ADC_BAL 1000
+extern uint32_t ADCY;
+extern uint32_t ADCX;
 struct item                                     
 {
     enum
@@ -49,7 +53,7 @@ struct page
 
 //
 /*************************************************************************************************/
-//°´¼üÒÑ¾­¶¨Òå¹ýÁË
+//ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 // #define KEY_1       D0                      //up
 // #define KEY_2       D3                     //down
 // #define KEY_3       D4                     //add
@@ -57,9 +61,9 @@ struct page
 // #define KEY_5       B12                     //enter
 // #define KEY_6       D11                     //leave
 /***************************************************************************************************/
-#define KEY_DelayTime   100                     //°´¼üÉ¨ÃèÑÓÊ±Ê±¼ä
-extern uint32_t cntpage;//Ò³Êý
-extern struct page *navigate[32];//Ö¸Õë
+#define KEY_DelayTime   100                     //ï¿½ï¿½ï¿½ï¿½É¨ï¿½ï¿½ï¿½ï¿½Ê±Ê±ï¿½ï¿½
+extern uint32_t cntpage;//Ò³ï¿½ï¿½
+extern struct page *navigate[32];//Ö¸ï¿½ï¿½
 
 uint8_t key_scan(void);
 void add_subpage(struct page * tg, char * name, struct page * v);
@@ -73,7 +77,8 @@ void add_title(struct page * tg, char * name, char length);
 void MenuRender(char full_update);
 void OLED_BeginUpdate(void);
 void MenuCmd(char cmd);
-void key_init(void);//°´¼ü³õÊ¼»¯
+void key_init(void);//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½
 void MenuInit(struct page *mainpage);
 void OLED_EndUpdate(void);
+uint16_t adc_mean_filter_convert (ADC_HandleTypeDef* hadc, const uint8_t count);
 #endif

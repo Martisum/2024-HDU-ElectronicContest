@@ -3,6 +3,7 @@
 #include "menu.h"
 #include "oled.h"
 #include "stdio.h"
+#include "adc.h"
 
 uint32_t cntpage;            // Ò³Êý
 struct page *navigate[32]; // Ö¸Õë
@@ -490,21 +491,6 @@ void MenuCmd(char cmd)
     }
     case KEY_START:
     {
-      //                for(uint8 k = 0;k<50;k++)
-      //                {
-      //                    int i = -1;
-      //                    uint8_t start_buf_M[BUFSIZ]={0};
-      //                    start_buf_M[++i] ='s';
-      ////                    start_buf_M[++i] =dir_forkroad + '0';
-      ////                    start_buf_M[++i] =dir_ku + '0';
-      ////                    start_buf_M[++i] ='\0';
-      //                    wireless_ch573_send_buff((uint8 *)start_buf_M, 1);
-      ////                    wireless_ch573_send_uint8('s');
-      ////                    wireless_ch573_send_uint8(dir_forkroad);
-      ////                    wireless_ch573_send_uint8(dir_ku);
-      ////                    wireless_ch573_send_uint8('e');
-      //                }
-
       break;
     }
     default:
@@ -516,76 +502,125 @@ void MenuCmd(char cmd)
     MenuRender(0);
 }
 
-uint8_t key_scan(void)
+// uint8_t key_scan(void)
+// {
+//   if (HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_0) == GPIO_PIN_RESET)
+//   {
+//     HAL_Delay(KEY_DelayTime);
+//     if (HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_0) == GPIO_PIN_RESET)
+//     {
+//       printf("KEY_ENTER\n");
+//       return KEY_ENTER;
+//     }
+//   }
+
+//   if (HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_1) == GPIO_PIN_RESET)
+//   {
+//     HAL_Delay(KEY_DelayTime);
+//     if (HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_1) == GPIO_PIN_RESET)
+//     {
+//       printf("KEY_ADD\n");
+//       return KEY_ADD;
+//     }
+//   }
+
+//   if (HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_2) == GPIO_PIN_RESET)
+//   {
+//     HAL_Delay(KEY_DelayTime);
+//     if (HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_2) == GPIO_PIN_RESET)
+//     {
+//       printf("KEY_LEAVE\n");
+//       return KEY_LEAVE;
+//     }
+//   }
+
+//   if (HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_3) == GPIO_PIN_RESET)
+//   {
+//     HAL_Delay(KEY_DelayTime);
+//     if (HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_3) == GPIO_PIN_RESET)
+//     {
+//       printf("KEY_UP\n");
+//       return KEY_UP;
+//     }
+//   }
+
+//   if (HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_5) == GPIO_PIN_RESET)
+//   {
+//     HAL_Delay(KEY_DelayTime);
+//     if (HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_5) == GPIO_PIN_RESET)
+//     {
+//       printf("KEY_LEAVE\n");
+//       return KEY_LEAVE;
+//     }
+//   }
+
+//   if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_8) == GPIO_PIN_RESET)
+//   {
+//     HAL_Delay(KEY_DelayTime);
+//     if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_8) == GPIO_PIN_RESET)
+//     {
+//       printf("KEY_DOWN\n");
+//       return KEY_DOWN;
+//     }
+//   }
+
+//   if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_9) == GPIO_PIN_RESET)
+//   {
+//     HAL_Delay(KEY_DelayTime);
+//     if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_9) == GPIO_PIN_RESET)
+//     {
+//       printf("KEY_SUB\n");
+//       return KEY_SUB;
+//     }
+//   }
+//   return 0;
+// }
+//-------------------------------------------------------------------------------------------------------------------
+//  @brief      °´¼üÉ¨Ãè
+//  @param      void
+//  @return     void
+//  @since      v1.0
+//  Sample usage:
+//-------------------------------------------------------------------------------------------------------------------
+uint32_t ADCY = 0;
+uint32_t ADCX = 0;
+uint8_t key_scan(void) 
 {
-  if (HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_0) == GPIO_PIN_RESET)
-  {
-    HAL_Delay(KEY_DelayTime);
-    if (HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_0) == GPIO_PIN_RESET)
-    {
-      printf("KEY_ENTER\n");
-      return KEY_ENTER;
-    }
+  if (ADCY > MAX_ADC_VAL) {
+      HAL_Delay(100);
+      if (ADCY > MAX_ADC_VAL) {
+          printf("KEY_DOWN;\n");
+          return KEY_LEAVE;
+      }
   }
+  if (ADCY < MIN_ADC_BAL) {
+      HAL_Delay(100);
+      if (ADCY < MIN_ADC_BAL) {
 
-  if (HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_1) == GPIO_PIN_RESET)
-  {
-    HAL_Delay(KEY_DelayTime);
-    if (HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_1) == GPIO_PIN_RESET)
-    {
-      printf("KEY_ADD\n");
-      return KEY_ADD;
-    }
+          printf("KEY_UP;\n");
+          return KEY_UP;
+      }
   }
-
-  if (HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_2) == GPIO_PIN_RESET)
-  {
-    HAL_Delay(KEY_DelayTime);
-    if (HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_2) == GPIO_PIN_RESET)
-    {
-      printf("KEY_LEAVE\n");
-      return KEY_LEAVE;
-    }
+  if (ADCX > MAX_ADC_VAL) {
+      HAL_Delay(100);
+      if (ADCX > MAX_ADC_VAL) {
+          printf("KEY_SUB;\n");
+          return KEY_SUB;
+      }
   }
-
-  if (HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_3) == GPIO_PIN_RESET)
-  {
-    HAL_Delay(KEY_DelayTime);
-    if (HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_3) == GPIO_PIN_RESET)
-    {
-      printf("KEY_UP\n");
-      return KEY_UP;
-    }
+  if (ADCX < MIN_ADC_BAL) {
+      HAL_Delay(100);
+      if (ADCX < MIN_ADC_BAL) {
+          printf("KEY_ADD;\n");
+          return KEY_ADD;
+      }
   }
-
-  if (HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_5) == GPIO_PIN_RESET)
-  {
-    HAL_Delay(KEY_DelayTime);
-    if (HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_5) == GPIO_PIN_RESET)
-    {
-      printf("KEY_LEAVE\n");
-      return KEY_LEAVE;
-    }
-  }
-
-  if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_8) == GPIO_PIN_RESET)
-  {
-    HAL_Delay(KEY_DelayTime);
-    if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_8) == GPIO_PIN_RESET)
-    {
-      printf("KEY_DOWN\n");
-      return KEY_DOWN;
-    }
-  }
-
-  if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_9) == GPIO_PIN_RESET)
-  {
-    HAL_Delay(KEY_DelayTime);
-    if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_9) == GPIO_PIN_RESET)
-    {
-      printf("KEY_SUB\n");
-      return KEY_SUB;
-    }
+  if (HAL_GPIO_ReadPin(GPIOE,GPIO_PIN_2) == 0) {
+      HAL_Delay(100);
+      if ((HAL_GPIO_ReadPin(GPIOE,GPIO_PIN_2) == 0)) {
+          printf("KEY_ENTER;\n");
+          return KEY_ENTER;
+      }
   }
   return 0;
 }
