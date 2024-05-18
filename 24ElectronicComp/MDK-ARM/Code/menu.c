@@ -589,7 +589,7 @@ uint8_t key_scan(void)
   if (ADCY > MAX_ADC_VAL) {
       HAL_Delay(100);
       if (ADCY > MAX_ADC_VAL) {
-          printf("KEY_DOWN;\n");
+          printf("KEY_LEAVE;\n");
           return KEY_LEAVE;
       }
   }

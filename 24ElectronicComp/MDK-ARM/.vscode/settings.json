@@ -3,7 +3,10 @@
         "*.ino": "plaintext",
         "ds18b20.h": "c",
         "menu.h": "c",
-        "oled.h": "c"
+        "oled.h": "c",
+        "geometry.h": "c",
+        "main.h": "c",
+        "dac.h": "c"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }

@@ -19,7 +19,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "adc.h"
-#include "dma.h"
+#include "dac.h"
 #include "i2c.h"
 #include "tim.h"
 #include "usart.h"
@@ -30,6 +30,7 @@
 #include "menu.h"
 #include "stdio.h"
 #include "oled.h"
+#include "geometry.h"
 
 struct page p0, p1, p2, p3, p4, p5, p6;
 void menu_init(void);
@@ -64,7 +65,27 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+void sin_wave_gen(void)
+{
+  oled_clear();
+  oled_show_string(0, 0, "sin_wave_gen()");
+  HAL_TIM_Base_Start_IT(&htim10);
+  global_wave_type=1;
+  while (1)
+  {
+    HAL_Delay(10);
 
+    if (ADCY > MAX_ADC_VAL) {
+      HAL_Delay(KEY_DelayTime);
+      if (ADCY > MAX_ADC_VAL) {
+        global_wave_type=0;
+          HAL_TIM_Base_Stop_IT(&htim10);
+          MenuRender(1);
+          return;
+      }
+    }
+  }
+}
 /* USER CODE END 0 */
 
 /**
@@ -96,18 +117,20 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_DMA_Init();
   MX_I2C1_Init();
   MX_USART1_UART_Init();
   MX_ADC1_Init();
-  MX_USART2_UART_Init();
   MX_TIM2_Init();
   MX_TIM7_Init();
+  MX_DAC_Init();
+  MX_TIM10_Init();
   /* USER CODE BEGIN 2 */
   printf("SYSTEM START\r\n");
   oled_init();
   menu_init();
+  sin_basedata(); //basic sin function data generate
   HAL_ADC_Start_IT(&hadc1);
+  HAL_DAC_Start(&hdac,DAC_CHANNEL_1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -118,13 +141,13 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
     MenuCmd(key_scan());
-    if (navigate[cntpage]->dymantic_page)//如果为动态页
+    if (navigate[cntpage]->dymantic_page)
     {
         MenuRender(0);
         HAL_Delay(100);
     }
   }
-    /* USER CODE END 3 */
+  /* USER CODE END 3 */
 }
 
 /**
@@ -175,6 +198,7 @@ void SystemClock_Config(void)
 /* USER CODE BEGIN 4 */
 void menu_init(void)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
 {
+  add_func(&p0, "<sin_wave_gen>", sin_wave_gen);
   add_subpage(&p0, "function", &p1);
   add_subpage(&p0, "pid", &p2);
   add_subpage(&p0, "state", &p3);
