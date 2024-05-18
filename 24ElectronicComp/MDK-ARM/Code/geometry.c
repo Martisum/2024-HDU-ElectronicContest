@@ -11,6 +11,7 @@ uint8_t head = 0;
 
 //全局波形选择变量
 uint8_t global_wave_type=0; //0-不显示波形 1-正弦波 2-方波
+uint8_t global_freq=5;
 
 uint16_t sine_wave_u16[POINTS];
 int sine_wave[POINTS]; 

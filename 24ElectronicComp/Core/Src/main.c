@@ -71,6 +71,7 @@ void sin_wave_gen(void)
   oled_show_string(0, 0, "sin_wave_gen()");
   HAL_TIM_Base_Start_IT(&htim10);
   global_wave_type=1;
+  __HAL_TIM_SET_AUTORELOAD(&htim10, global_freq);
   while (1)
   {
     HAL_Delay(10);
@@ -199,9 +200,10 @@ void SystemClock_Config(void)
 void menu_init(void)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
 {
   add_func(&p0, "<sin_wave_gen>", sin_wave_gen);
-  add_subpage(&p0, "function", &p1);
-  add_subpage(&p0, "pid", &p2);
-  add_subpage(&p0, "state", &p3);
+  add_subpage(&p0, "<pid>", &p1);
+  add_subpage(&p0, "<param>", &p2);
+
+  add_value(&p2, "[global_freq]", (int *)&global_freq, 1, NULL);
 
   MenuInit(&p0);
 }

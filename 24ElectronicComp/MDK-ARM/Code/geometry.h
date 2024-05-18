@@ -20,6 +20,7 @@
 extern uint16_t sine_wave_u16[POINTS];
 extern int sine_wave[POINTS]; 
 extern uint8_t global_wave_type;
+extern uint8_t global_freq;
 
 void sin_basedata(void);
 uint16_t my_abs(uint16_t m, uint16_t n);
