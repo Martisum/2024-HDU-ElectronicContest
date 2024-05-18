@@ -57,8 +57,6 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define ds18b20_dat_Pin GPIO_PIN_1
-#define ds18b20_dat_GPIO_Port GPIOA
 
 /* USER CODE BEGIN Private defines */
 
