@@ -16,6 +16,9 @@ PID speed,location;
 //actual pwm=107 is lowest    
 //105 -3 degree 
 //47  +2.6 deg      99 -2.6 deg
+#define UP_DEG_PWM 99
+#define DOWN_DEG_PWM 47
+#define HORIZON_DEG_PWM 82
 
 uint16_t HORIZON_PWM=70;
 
@@ -58,5 +61,18 @@ void spd_pid(int16_t spd,int now_spd){
 }
 
 void set_servo_angle(int16_t angle){
-    
+    if(angle>=0){
+        if(angle+HORIZON_PWM>UP_DEG_PWM){
+            __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_3,UP_DEG_PWM);
+        }else{
+            __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_3, angle+HORIZON_PWM);
+        }
+        
+    }else{
+        if(angle+HORIZON_DEG_PWM<DOWN_DEG_PWM){
+            __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_3, DOWN_DEG_PWM);
+        }else{
+            __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_3, angle*(float)((HORIZON_DEG_PWM-DOWN_DEG_PWM)/(UP_DEG_PWM-HORIZON_DEG_PWM))+HORIZON_PWM);
+        }
+    }
 }
