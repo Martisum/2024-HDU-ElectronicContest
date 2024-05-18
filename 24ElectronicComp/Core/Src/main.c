@@ -31,6 +31,7 @@
 #include "stdio.h"
 #include "oled.h"
 #include "geometry.h"
+#include "motor.h"
 
 struct page p0, p1, p2, p3, p4, p5, p6;
 void menu_init(void);
@@ -65,6 +66,7 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+
 void sin_wave_gen(void)
 {
   uint8_t wave_index=0;
@@ -135,6 +137,39 @@ void square_wave_gen(void)
     }
   }
 }
+
+void angle_confirm(void)
+{
+  oled_clear();
+  oled_show_string(0, 0, "angle_confirm()");
+  __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_3, HORIZON_PWM);
+  while (1)
+  {
+    oled_show_uint(0,1,HORIZON_PWM,5);
+    __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_3, HORIZON_PWM);
+    HAL_Delay(10);
+
+    if (ADCY > MAX_ADC_VAL) {
+      HAL_Delay(KEY_DelayTime);
+      if (ADCY > MAX_ADC_VAL) {
+        MenuRender(1);
+        return;
+      }
+    }
+    if (ADCX > MAX_ADC_VAL) {
+      HAL_Delay(100);
+      if (ADCX > MAX_ADC_VAL) {
+          HORIZON_PWM--;
+      }
+    }
+    if (ADCX < MIN_ADC_BAL) {
+        HAL_Delay(100);
+        if (ADCX < MIN_ADC_BAL) {
+          HORIZON_PWM++;
+        }
+    }
+  }
+}
 /* USER CODE END 0 */
 
 /**
@@ -181,6 +216,9 @@ int main(void)
   square_basedata(); //basic square function data generate
   HAL_ADC_Start_IT(&hadc1);
   HAL_DAC_Start(&hdac,DAC_CHANNEL_1);
+  HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_3);
+  __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_3, HORIZON_PWM);
+  spd_pid_init();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -250,10 +288,12 @@ void menu_init(void)
 {
   add_func(&p0, "<sin_wave_gen>", sin_wave_gen);
   add_func(&p0, "<square_wave_gen>", square_wave_gen);
+  add_func(&p0, "<angle_confirm>", angle_confirm);
   add_subpage(&p0, "<pid>", &p1);
   add_subpage(&p0, "<param>", &p2);
 
   add_value(&p2, "[global_freq]", (int *)&global_freq, 1, NULL);
+  add_value(&p2, "[HORIZON_PWM]", (int *)&HORIZON_PWM, 1, NULL);
 
   MenuInit(&p0);
 }
