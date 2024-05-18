@@ -246,7 +246,9 @@ void TIM1_UP_TIM10_IRQHandler(void)
     if(wave_index>=POINTS) wave_index=0;
     HAL_DAC_SetValue(&hdac,DAC_CHANNEL_1,DAC_ALIGN_12B_R,sine_wave_u16[wave_index]);	
   }else if(global_wave_type==2){
-
+    wave_index++;
+    if(wave_index>=POINTS) wave_index=0;
+    HAL_DAC_SetValue(&hdac,DAC_CHANNEL_1,DAC_ALIGN_12B_R,square_wave_u16[wave_index]);	
   }
   /* USER CODE END TIM1_UP_TIM10_IRQn 1 */
 }

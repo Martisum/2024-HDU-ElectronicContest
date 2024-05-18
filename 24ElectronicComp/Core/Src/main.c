@@ -67,13 +67,61 @@ void SystemClock_Config(void);
 /* USER CODE BEGIN 0 */
 void sin_wave_gen(void)
 {
+  uint8_t wave_index=0;
+  uint8_t wave_i=0;
+
   oled_clear();
   oled_show_string(0, 0, "sin_wave_gen()");
   HAL_TIM_Base_Start_IT(&htim10);
   global_wave_type=1;
   __HAL_TIM_SET_AUTORELOAD(&htim10, global_freq);
+
   while (1)
   {
+    wave_index++;
+    wave_i++;
+    if(wave_index>=POINTS) wave_index=0; 
+    if(wave_i<128){
+      wave_point_add(wave_i,sine_oled_wave[wave_index]);
+    }else{
+      wave_point_add(127,sine_oled_wave[wave_index]);
+      refresh_wave(0,127);
+    }
+
+    HAL_Delay(10);
+    if (ADCY > MAX_ADC_VAL) {
+      HAL_Delay(KEY_DelayTime);
+      if (ADCY > MAX_ADC_VAL) {
+        global_wave_type=0;
+          HAL_TIM_Base_Stop_IT(&htim10);
+          MenuRender(1);
+          return;
+      }
+    }
+  }
+}
+
+void square_wave_gen(void)
+{
+  uint8_t wave_index=0;
+  uint8_t wave_i=0;
+
+  oled_clear();
+  oled_show_string(0, 0, "square_wave_gen()");
+  HAL_TIM_Base_Start_IT(&htim10);
+  global_wave_type=2;
+  __HAL_TIM_SET_AUTORELOAD(&htim10, global_freq);
+  while (1)
+  {
+    wave_index++;
+    wave_i++;
+    if(wave_index>=POINTS) wave_index=0; 
+    if(wave_i<128){
+      wave_point_add(wave_i,square_oled_wave[wave_index]);
+    }else{
+      wave_point_add(127,square_oled_wave[wave_index]);
+      refresh_wave(0,127);
+    }
     HAL_Delay(10);
 
     if (ADCY > MAX_ADC_VAL) {
@@ -130,6 +178,7 @@ int main(void)
   oled_init();
   menu_init();
   sin_basedata(); //basic sin function data generate
+  square_basedata(); //basic square function data generate
   HAL_ADC_Start_IT(&hadc1);
   HAL_DAC_Start(&hdac,DAC_CHANNEL_1);
   /* USER CODE END 2 */
@@ -200,6 +249,7 @@ void SystemClock_Config(void)
 void menu_init(void)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
 {
   add_func(&p0, "<sin_wave_gen>", sin_wave_gen);
+  add_func(&p0, "<square_wave_gen>", square_wave_gen);
   add_subpage(&p0, "<pid>", &p1);
   add_subpage(&p0, "<param>", &p2);
 

@@ -15,6 +15,7 @@ uint8_t global_freq=5;
 
 uint16_t sine_wave_u16[POINTS];
 int sine_wave[POINTS]; 
+uint8_t sine_oled_wave[POINTS];
 void sin_basedata(void) 
 {  
     for (int i = 0; i < POINTS; i++) 
@@ -23,6 +24,27 @@ void sin_basedata(void)
         double sin_value = sin(x);  // 计算正弦值  
         sine_wave[i] = (int)((sin_value + 1) * SCALE + OFFSET);  // 缩放和平移正弦值到100~4000范围 
         sine_wave_u16[i] = (uint16_t)sine_wave[i];
+        sine_oled_wave[i]=(int)((sin_value + 1) * OLED_SCALE + OLED_OFFSET);  // 缩放和平移正弦值到0~63范围 
+    }  
+}
+
+uint16_t square_wave_u16[POINTS];
+int square_wave[POINTS]; 
+uint8_t square_oled_wave[POINTS];
+void square_basedata(void) 
+{  
+    for (int i = 0; i < POINTS; i++) 
+    {  
+        int8_t square_value = 0;  // 计算矩形波值
+        if(i<POINTS/2){
+            square_value=-1;
+        }else{
+            square_value=1;
+        }
+
+        square_wave[i] = (int)((square_value + 1) * SCALE + OFFSET);  // 缩放和平移正弦值到100~4000范围 
+        square_wave_u16[i] = (uint16_t)square_wave[i];
+        square_oled_wave[i]=(int)((square_value + 1) * OLED_SCALE + OLED_OFFSET);
     }  
 }
 
@@ -62,24 +84,6 @@ void show_point(uint8_t x, uint8_t y) {
     RAM[x][ty] = bi;
     oled_draw_point(x, ty, RAM[x][ty]);
     return;
-}
-
-void show_two_point(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2) {
-    uint8_t ty1 = y1 / 8, ly1 = y1 % 8;
-    uint8_t ty2 = y2 / 8, ly2 = y2 % 8;
-    uint8_t bi1 = 0, bi2 = 0;
-    if (ty1 != ty2) {
-        bi1 = 1 << ly1;
-        bi2 = 1 << ly2;
-        oled_draw_point(x1, ty1, bi1);
-        oled_draw_point(x2, ty2, bi2);
-    } else if (ty1 == ty2 && x1 == x2) {
-        bi1 = 1 << ly1;
-        bi2 = 1 << ly2;
-        bi1 = bi1 | bi2;
-        oled_draw_point(x1, ty1, bi1);
-    }
-
 }
 
 //-------------------------------------------------------------------------------------------------------------------
@@ -273,7 +277,7 @@ void wave_point_init(void) {
 }
 
 //为波形添加一个温度数值
-void wave_point_add(uint8_t num) {
+void wave_point_add(uint8_t x, uint8_t num) {
     if (head < 128) {
         wave[head] = num;
         head++;
@@ -283,6 +287,7 @@ void wave_point_add(uint8_t num) {
         }
         wave[127] = num;
     }
+    show_point(x, num);
 }
 
 //刷新波形
@@ -293,5 +298,16 @@ void refresh_wave(uint8_t startline, uint8_t endline) {
         for (uint8_t j = 0; j < 8; j++) {
             oled_draw_point(i, j, 0x00);
         }
+
+        show_point(i, wave[i]);
+    }
+}
+
+void draw_sin(void){
+    uint8_t wave_index=0;
+    for(uint8_t i=0;i<128;i++){
+        wave_index++;
+        if(wave_index>POINTS) wave_index=0;
+        show_point(i,sine_oled_wave[wave_index]);
     }
 }
