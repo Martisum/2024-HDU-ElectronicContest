@@ -9,6 +9,12 @@
 float spd_kp=1.5,spd_ki=0,spd_kd=0;
 float dis_kp=-0.3,dis_ki=-0.03,dis_kd=0;
 
+int16_t X_now = 0;
+int16_t X_last = 0;
+int16_t Y_now=0;
+int16_t Y_last=0;
+int16_t x_speed=0;
+
 //control_state is 0:stop, 1:speed PID only, 2:speed and location PID
 uint8_t control_state=0;
 
