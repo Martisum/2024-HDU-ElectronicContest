@@ -63,6 +63,7 @@ int16_t squa_wave[MAX_DATALEN];//square数据缓存
 int16_t squacnt=0;//square数据缓存计数
 int16_t loca_wave[MAX_DATALEN];//location数据缓存
 int16_t locacnt=0;//location数据缓存计数
+int16_t myDAC[4] = {0};
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -409,7 +410,6 @@ void Current_Voltage(void)
     oled_show_float(50,1,current,5,3);
     oled_show_string(0, 2, "Voltage:");
     oled_show_float(50,2,voltage,5,3);
-
     HAL_Delay(10);
     if (ADCY > MAX_ADC_VAL) {
       HAL_Delay(KEY_DelayTime);
@@ -467,19 +467,28 @@ int main(void)
   menu_init();
   sin_basedata(); //basic sin function data generate
   square_basedata(); //basic square function data generate
-  HAL_ADC_Start_IT(&hadc1);
+  HAL_ADC_Start(&hadc1);
   HAL_DAC_Start(&hdac,DAC_CHANNEL_1);
   HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_3);
   __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_3, HORIZON_PWM);
   spd_pid_init();
   /* USER CODE END 2 */
-
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
     /* USER CODE END WHILE */
-
+    for(uint8_t i=0;i<4;i++)
+    {
+      HAL_ADC_Start(&hadc1);
+      HAL_ADC_PollForConversion(&hadc1, 0xffff);
+      myDAC[i] = HAL_ADC_GetValue(&hadc1);
+    }
+    HAL_ADC_Stop(&hadc1);  
+    ADCY = myDAC[0];
+    ADCX = myDAC[1];
+    current=myDAC[2];
+    voltage=myDAC[3]  ;
     /* USER CODE BEGIN 3 */
     MenuCmd(key_scan());
     if (navigate[cntpage]->dymantic_page)
