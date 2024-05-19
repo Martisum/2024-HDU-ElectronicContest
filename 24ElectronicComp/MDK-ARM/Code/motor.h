@@ -31,7 +31,9 @@ extern int16_t X_last;
 extern int16_t Y_now;
 extern int16_t Y_last;
 extern int16_t x_speed;
+extern uint8_t oscillation_tar;
 
+uint8_t abs_distance(int16_t a,int16_t b);
 void spd_pid_init(void);
 void set_loc(uint16_t tar_loc,uint16_t now_loc);
 void spd_pid(int16_t spd,int now_spd);

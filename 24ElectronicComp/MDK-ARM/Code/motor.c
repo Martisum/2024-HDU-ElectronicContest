@@ -17,6 +17,7 @@ int16_t x_speed=0;
 
 //control_state is 0:stop, 1:speed PID only, 2:speed and location PID
 uint8_t control_state=0;
+uint8_t oscillation_tar=0;
 
 PID speed,location;
 
@@ -39,6 +40,11 @@ void spd_pid_init(){
     location.PS=dis_kp;
     location.IS=dis_ki;
     location.DS=dis_kd;
+}
+
+uint8_t abs_distance(int16_t a,int16_t b){
+    if(a-b>=0) return a-b;
+    else return b-a;
 }
 
 void set_loc(uint16_t tar_loc,uint16_t now_loc){

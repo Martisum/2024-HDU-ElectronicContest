@@ -235,6 +235,7 @@ void speed_control(void)
     if (ADCY > MAX_ADC_VAL) {
       HAL_Delay(KEY_DelayTime);
       if (ADCY > MAX_ADC_VAL) {
+        control_state=0;
         HAL_TIM_Base_Stop_IT(&htim7);
         MenuRender(1);
         return;
@@ -276,6 +277,7 @@ void location_control(void)
     if (ADCY > MAX_ADC_VAL) {
       HAL_Delay(KEY_DelayTime);
       if (ADCY > MAX_ADC_VAL) {
+        control_state=0;
         HAL_TIM_Base_Stop_IT(&htim7);
         MenuRender(1);
         return;
@@ -319,6 +321,76 @@ void location_wave(void)
     if (ADCY > MAX_ADC_VAL) {
       HAL_Delay(KEY_DelayTime);
       if (ADCY > MAX_ADC_VAL) {
+        OLED_GClear(); 
+        HAL_TIM_Base_Stop_IT(&htim7);
+        MenuRender(1);
+        return;
+      }
+    }  
+  }
+}
+
+void loc_wave_oscillation(void)
+{
+  locacnt=0;
+  oled_clear();
+  oled_show_string(0, 0, "loc_wave_oscillation()");
+  HAL_TIM_Base_Start_IT(&htim7);
+  HAL_UARTEx_ReceiveToIdle_DMA(&huart3,rx_buf,127);	
+
+  uint8_t coincident_cnt=0; //record the coincident time when ball is in the resonable range of target
+  control_state=2; //turn control_state to enable speed and location PID
+  oscillation_tar=100; //set the initial target
+  location.set_targetS=oscillation_tar; 
+    
+  while (1)
+  {
+      if(my_abs(X_now,oscillation_tar)<20){
+        coincident_cnt++;
+      }
+
+      //change the oscillation_tar to achieve the sin wave
+      if(coincident_cnt>100){
+        if(oscillation_tar==100){
+          oscillation_tar=200;
+          location.set_targetS=oscillation_tar; 
+          printf("oscillation_tar=%d\r\n",oscillation_tar);
+          coincident_cnt=0;
+        }
+        else if(oscillation_tar==200){
+          oscillation_tar=100;
+          location.set_targetS=oscillation_tar; 
+          printf("oscillation_tar=%d\r\n",oscillation_tar);
+          coincident_cnt=0;
+        }
+      }
+
+      for(uint8_t i=0;i<MAX_DATALEN;i++) 
+      {
+        uint16_t Lwave = 64-(loca_wave[i]*64/300);
+        OLED_ClearPoint(i,Lwave);
+      }         
+      if(locacnt < MAX_DATALEN)//loca_wave数据保存
+			{
+				loca_wave[locacnt++] = X_now;
+			}
+			else
+			{
+				memcpy((void *)loca_wave, (void *)(loca_wave + 1), sizeof(loca_wave[0]) * (MAX_DATALEN - 1));
+				loca_wave[MAX_DATALEN - 1] = X_now;
+			}
+    for (uint8_t i = 0; i < MAX_DATALEN ; i++)
+    {
+      uint16_t Lwave = 64-(loca_wave[i]*64/300);
+      OLED_DrawPoint(i,Lwave);
+    }
+    OLED_Refresh();
+    HAL_Delay(1);
+
+    if (ADCY > MAX_ADC_VAL) {
+      HAL_Delay(KEY_DelayTime);
+      if (ADCY > MAX_ADC_VAL) {
+        control_state=0; //reset control_state
         OLED_GClear(); 
         HAL_TIM_Base_Stop_IT(&htim7);
         MenuRender(1);
