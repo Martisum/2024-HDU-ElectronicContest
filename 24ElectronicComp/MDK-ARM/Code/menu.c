@@ -4,9 +4,10 @@
 #include "oled.h"
 #include "stdio.h"
 #include "adc.h"
+#include "motor.h"
 
-uint32_t cntpage;            // Ò³Êý
-struct page *navigate[32]; // Ö¸Õë
+uint32_t cntpage;            // Ò³ï¿½ï¿½
+struct page *navigate[32]; // Ö¸ï¿½ï¿½
 
 enum
 {
@@ -20,10 +21,10 @@ enum
 } KEY_TYPE;
 
 //-------------------------------------------------------------------------------------------------------------------
-//  @brief      ÔÚtgÏÂÌí¼Ó×Ó²Ëµ¥ÀàÐÍ
-//  @param      tg              Ìí¼Ó¼¶µÄµØÖ·
-//  @param      name            Ãû³Æ ×î³¤13Î»
-//  @param          v                           µ±Ç°Ìí¼ÓÏÂÒ»¼¶²Ëµ¥µØÖ·
+//  @brief      ï¿½ï¿½tgï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó²Ëµï¿½ï¿½ï¿½ï¿½ï¿½
+//  @param      tg              ï¿½ï¿½ï¿½Ó¼ï¿½ï¿½Äµï¿½Ö·
+//  @param      name            ï¿½ï¿½ï¿½ï¿½ ï¿½î³¤13Î»
+//  @param          v                           ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ëµï¿½ï¿½ï¿½Ö·
 //  @return     void
 //  @since      v1.0
 //  Sample usage:
@@ -43,11 +44,11 @@ void add_subpage(struct page *tg, char *name, struct page *v)
 }
 
 //-------------------------------------------------------------------------------------------------------------------
-//  @brief      ÔÚtgÏÂÌí¼ÓÖµÀàÐÍ
-//  @param      tg                                  ÕâÒ»¼¶²Ëµ¥
-//  @param      name                            Ãû³Æ
-//  @param          v                                           ¸ÃÖµµÄ´óÐ¡
-//  @param          changedCallBack             º¯ÊýÖ¸Õë Ö´ÐÐÐÞ¸Ä¸ÃÖµµÄº¯Êý
+//  @brief      ï¿½ï¿½tgï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½
+//  @param      tg                                  ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ëµï¿½
+//  @param      name                            ï¿½ï¿½ï¿½ï¿½
+//  @param          v                                           ï¿½ï¿½Öµï¿½Ä´ï¿½Ð¡
+//  @param          changedCallBack             ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ Ö´ï¿½ï¿½ï¿½Þ¸Ä¸ï¿½Öµï¿½Äºï¿½ï¿½ï¿½
 //  @return     void
 //  @since      v1.0
 //  Sample usage:
@@ -68,11 +69,11 @@ void add_value(struct page *tg, char *name, int *v, int16_t dt, void (*changedCa
 }
 
 //-------------------------------------------------------------------------------------------------------------------
-//  @brief      ÔÚtgÏÂÌí¼ÓÖµÀàÐÍ
-//  @param      tg                                  ÕâÒ»¼¶²Ëµ¥
-//  @param      name                            Ãû³Æ
-//  @param          v                                           ¸ÃÖµµÄ´óÐ¡
-//  @param          changedCallBack             º¯ÊýÖ¸Õë Ö´ÐÐÐÞ¸Ä¸ÃÖµµÄº¯Êý
+//  @brief      ï¿½ï¿½tgï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½
+//  @param      tg                                  ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ëµï¿½
+//  @param      name                            ï¿½ï¿½ï¿½ï¿½
+//  @param          v                                           ï¿½ï¿½Öµï¿½Ä´ï¿½Ð¡
+//  @param          changedCallBack             ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ Ö´ï¿½ï¿½ï¿½Þ¸Ä¸ï¿½Öµï¿½Äºï¿½ï¿½ï¿½
 //  @return     void
 //  @since      v1.0
 //  Sample usage:
@@ -93,11 +94,11 @@ void add_value_uint8(struct page *tg, char *name, uint8_t *v, uint8_t dt, void (
 }
 
 //-------------------------------------------------------------------------------------------------------------------
-//  @brief      ÔÚtgÏÂÌí¼ÓÖµÀàÐÍ
-//  @param      tg                                  ÕâÒ»¼¶²Ëµ¥
-//  @param      name                            Ãû³Æ
-//  @param          v                                           ¸ÃÖµµÄ´óÐ¡
-//  @param          changedCallBack             º¯ÊýÖ¸Õë Ö´ÐÐÐÞ¸Ä¸ÃÖµµÄº¯Êý
+//  @brief      ï¿½ï¿½tgï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½
+//  @param      tg                                  ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ëµï¿½
+//  @param      name                            ï¿½ï¿½ï¿½ï¿½
+//  @param          v                                           ï¿½ï¿½Öµï¿½Ä´ï¿½Ð¡
+//  @param          changedCallBack             ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ Ö´ï¿½ï¿½ï¿½Þ¸Ä¸ï¿½Öµï¿½Äºï¿½ï¿½ï¿½
 //  @return     void
 //  @since      v1.0
 //  Sample usage:
@@ -120,11 +121,11 @@ void add_title(struct page *tg, char *name, char length)
 }
 
 //-------------------------------------------------------------------------------------------------------------------
-//  @brief      ÔÚtgÏÂÌí¼Ó¸¡µãÊýÀàÐÍ
-//  @param      tg                                  ÕâÒ»¼¶²Ëµ¥
-//  @param      name                            Ãû³Æ
-//  @param          v                                           ¸ÃÖµµÄ´óÐ¡
-//  @param          changedCallBack             º¯ÊýÖ¸Õë Ö´ÐÐÐÞ¸Ä¸ÃÖµµÄº¯Êý
+//  @brief      ï¿½ï¿½tgï¿½ï¿½ï¿½ï¿½ï¿½Ó¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//  @param      tg                                  ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ëµï¿½
+//  @param      name                            ï¿½ï¿½ï¿½ï¿½
+//  @param          v                                           ï¿½ï¿½Öµï¿½Ä´ï¿½Ð¡
+//  @param          changedCallBack             ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ Ö´ï¿½ï¿½ï¿½Þ¸Ä¸ï¿½Öµï¿½Äºï¿½ï¿½ï¿½
 //  @return     void
 //  @since      v1.0
 //  Sample usage:
@@ -145,11 +146,11 @@ void add_value_float(struct page *tg, char *name, float *v, float dt, void (*cha
 }
 
 //-------------------------------------------------------------------------------------------------------------------
-//  @brief      ÔÚtgÏÂÌí¼Óint32ÊýÀàÐÍ
-//  @param      tg                                  ÕâÒ»¼¶²Ëµ¥
-//  @param      name                            Ãû³Æ
-//  @param          v                                           ¸ÃÖµµÄ´óÐ¡
-//  @param          changedCallBack             º¯ÊýÖ¸Õë Ö´ÐÐÐÞ¸Ä¸ÃÖµµÄº¯Êý
+//  @brief      ï¿½ï¿½tgï¿½ï¿½ï¿½ï¿½ï¿½ï¿½int32ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//  @param      tg                                  ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ëµï¿½
+//  @param      name                            ï¿½ï¿½ï¿½ï¿½
+//  @param          v                                           ï¿½ï¿½Öµï¿½Ä´ï¿½Ð¡
+//  @param          changedCallBack             ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ Ö´ï¿½ï¿½ï¿½Þ¸Ä¸ï¿½Öµï¿½Äºï¿½ï¿½ï¿½
 //  @return     void
 //  @since      v1.0
 //  Sample usage:
@@ -170,11 +171,11 @@ void add_value_int32(struct page *tg, char *name, int32_t *v, int32_t dt, void (
 }
 
 //-------------------------------------------------------------------------------------------------------------------
-//  @brief      ÔÚtgÏÂÌí¼Ó¿ª¹ØÀàÐÍ
-//  @param      tg                  ÕâÒ»¼¶²Ëµ¥
-//  @param      name            Ãû³Æ
-//  @param          v                           Îª1 0Á½Öµ 1Îªon 0Îªoff
-//  @param          operate             Ö´ÐÐ¿ª¹Ø²Ù×÷µÄº¯Êý
+//  @brief      ï¿½ï¿½tgï¿½ï¿½ï¿½ï¿½ï¿½Ó¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//  @param      tg                  ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ëµï¿½
+//  @param      name            ï¿½ï¿½ï¿½ï¿½
+//  @param          v                           Îª1 0ï¿½ï¿½Öµ 1Îªon 0Îªoff
+//  @param          operate             Ö´ï¿½Ð¿ï¿½ï¿½Ø²ï¿½ï¿½ï¿½ï¿½Äºï¿½ï¿½ï¿½
 //  @return     void
 //  @since      v1.0
 //  Sample usage:
@@ -196,10 +197,10 @@ void add_switc(struct page *tg, char *name, int16_t *v, void (*operate)())
 }
 
 //-------------------------------------------------------------------------------------------------------------------
-//  @brief      ÔÚtgÏÂÌí¼Óº¯ÊýÀàÐÍ
-//  @param      tg                  ÕâÒ»¼¶²Ëµ¥
-//  @param      name            Ãû³Æ
-//  @param          v                           Ö´ÐÐ¸Ã²Ù×÷º¯ÊýµÄÃû³Æ
+//  @brief      ï¿½ï¿½tgï¿½ï¿½ï¿½ï¿½ï¿½Óºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//  @param      tg                  ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ëµï¿½
+//  @param      name            ï¿½ï¿½ï¿½ï¿½
+//  @param          v                           Ö´ï¿½Ð¸Ã²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 //  @return     void
 //  @since      v1.0
 //  Sample usage:
@@ -219,7 +220,7 @@ void add_func(struct page *tg, char *name, void (*v)())
 }
 
 //-------------------------------------------------------------------------------------------------------------------
-//  @brief      ÏÔÊ¾¹â±ê
+//  @brief      ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½
 //  @return     void
 //  @since      v1.0
 //  Sample usage:
@@ -235,8 +236,8 @@ void OLED_EndUpdate(void)
 }
 
 //-------------------------------------------------------------------------------------------------------------------
-//  @brief      ´òÓ¡Êä³ö ²Ëµ¥É¨Ãè
-//  @param      full_update                 0 »ò 1 Ñ¡ÔñÈ«²¿´òÓ¡»òÕßÖ»Ë¢ÐÂ±ä»¯²¿·Ö
+//  @brief      ï¿½ï¿½Ó¡ï¿½ï¿½ï¿½ ï¿½Ëµï¿½É¨ï¿½ï¿½
+//  @param      full_update                 0 ï¿½ï¿½ 1 Ñ¡ï¿½ï¿½È«ï¿½ï¿½ï¿½ï¿½Ó¡ï¿½ï¿½ï¿½ï¿½Ö»Ë¢ï¿½Â±ä»¯ï¿½ï¿½ï¿½ï¿½
 //  @return     void
 //  @since      v1.0
 //  Sample usage:
@@ -298,7 +299,7 @@ void MenuRender(char full_update)
   }
   else
   {
-    if (navigate[cntpage]->dymantic_page) // Ö»¸üÐÂ¶¯Ì¬Ò³£¬Ö»¸üÐÂvalueÀàÐÍµÄÏî£¬²»ÏÔÊ¾¹â±ê
+    if (navigate[cntpage]->dymantic_page) // Ö»ï¿½ï¿½ï¿½Â¶ï¿½Ì¬Ò³ï¿½ï¿½Ö»ï¿½ï¿½ï¿½ï¿½valueï¿½ï¿½ï¿½Íµï¿½ï¿½î£¬ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½
     {
       for (int i = navigate[cntpage]->rpos; i < navigate[cntpage]->rpos + 8 && i < navigate[cntpage]->count; i++)
       {
@@ -339,8 +340,8 @@ void MenuInit(struct page *mainpage)
 }
 
 //-------------------------------------------------------------------------------------------------------------------
-//  @brief      Ö´ÐÐ°´¼ü²Ù×÷
-//  @param      cmd                                     °´¼ü¹¦ÄÜ 0 ÎªÎÞ²Ù×÷
+//  @brief      Ö´ï¿½Ð°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//  @param      cmd                                     ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 0 Îªï¿½Þ²ï¿½ï¿½ï¿½
 //  @return     void
 //  @since      v1.0
 //  Sample usage:
@@ -576,7 +577,7 @@ void MenuCmd(char cmd)
 //   return 0;
 // }
 //-------------------------------------------------------------------------------------------------------------------
-//  @brief      °´¼üÉ¨Ãè
+//  @brief      ï¿½ï¿½ï¿½ï¿½É¨ï¿½ï¿½
 //  @param      void
 //  @return     void
 //  @since      v1.0
@@ -584,8 +585,27 @@ void MenuCmd(char cmd)
 //-------------------------------------------------------------------------------------------------------------------
 uint32_t ADCY = 0;
 uint32_t ADCX = 0;
+
+void ADC_Get_Value(void)
+{
+  for(uint8_t i=0;i<4;i++)
+  {
+    HAL_ADC_Start(&hadc1);
+    HAL_ADC_PollForConversion(&hadc1, 20);
+    switch(i)
+    {
+      case 0: ADCY = HAL_ADC_GetValue(&hadc1);break;
+      case 1: ADCX = HAL_ADC_GetValue(&hadc1);break;
+      case 2: current = HAL_ADC_GetValue(&hadc1);break;
+      case 3: voltage = HAL_ADC_GetValue(&hadc1);break;
+    }
+  }
+
+}
+
 uint8_t key_scan(void) 
 {
+  ADC_Get_Value();
   if (ADCY > MAX_ADC_VAL) {
       HAL_Delay(100);
       if (ADCY > MAX_ADC_VAL) {

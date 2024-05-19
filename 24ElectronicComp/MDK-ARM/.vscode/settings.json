@@ -12,7 +12,8 @@
         "string.h": "c",
         "tim.h": "c",
         "math.h": "c",
-        "stm32f4xx_it.h": "c"
+        "stm32f4xx_it.h": "c",
+        "xutility": "c"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }

@@ -65,6 +65,7 @@ struct page
 extern uint32_t cntpage;//ҳ��
 extern struct page *navigate[32];//ָ��
 
+void ADC_Get_Value(void);
 uint8_t key_scan(void);
 void add_subpage(struct page * tg, char * name, struct page * v);
 void add_value(struct page * tg, char * name, int * v, int16_t dt, void (*changedCallBack)());
