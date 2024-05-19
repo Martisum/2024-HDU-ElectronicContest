@@ -403,8 +403,6 @@ void Current_Voltage(void)
 {
   oled_clear();
   oled_show_string(0, 0, "Show_Current_Voltage");
-  HAL_TIM_Base_Start_IT(&htim7);
-  HAL_ADC_Start_IT(&hadc1);  
   while (1)
   {
     oled_show_string(0, 1, "Current:");
@@ -416,8 +414,6 @@ void Current_Voltage(void)
     if (ADCY > MAX_ADC_VAL) {
       HAL_Delay(KEY_DelayTime);
       if (ADCY > MAX_ADC_VAL) {
-        OLED_GClear(); 
-        HAL_TIM_Base_Stop_IT(&htim7);
         MenuRender(1);
         return;
       }
@@ -465,7 +461,6 @@ int main(void)
   MX_DAC_Init();
   MX_TIM10_Init();
   MX_USART3_UART_Init();
-  MX_ADC2_Init();
   /* USER CODE BEGIN 2 */
   printf("SYSTEM START\r\n");
   oled_init();

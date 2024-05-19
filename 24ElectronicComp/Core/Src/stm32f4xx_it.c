@@ -62,7 +62,6 @@
 
 /* External variables --------------------------------------------------------*/
 extern ADC_HandleTypeDef hadc1;
-extern ADC_HandleTypeDef hadc2;
 extern TIM_HandleTypeDef htim7;
 extern TIM_HandleTypeDef htim10;
 extern DMA_HandleTypeDef hdma_usart3_rx;
@@ -261,7 +260,6 @@ void ADC_IRQHandler(void)
 
   /* USER CODE END ADC_IRQn 0 */
   HAL_ADC_IRQHandler(&hadc1);
-  HAL_ADC_IRQHandler(&hadc2);
   /* USER CODE BEGIN ADC_IRQn 1 */
 
   /* USER CODE END ADC_IRQn 1 */
@@ -363,33 +361,27 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hdac)
 {
   static uint8_t cnt = 0;
   cnt++;
-  cnt%=2;
+  cnt%=3;
   if(cnt==0)
   {
-    if(hdac == &hadc1)
-    {
       ADCY = HAL_ADC_GetValue(&hadc1);
-      HAL_ADC_Start_IT(&hadc1); 
-    }
-    else if(hdac == &hadc2) 
-    {
-      current=HAL_ADC_GetValue(&hadc2);
-      HAL_ADC_Start_IT(&hadc2);    
-    }    
-  }
+      HAL_ADC_Start_IT(&hadc1);      
+  }    
   else if(cnt==1)
   {
-    if(hdac == &hadc1)
-    {
       ADCX = HAL_ADC_GetValue(&hadc1);
-      HAL_ADC_Start_IT(&hadc1); 
-    }
-    else if(hdac == &hadc2) 
-    {
-      voltage=HAL_ADC_GetValue(&hadc2);
-      HAL_ADC_Start_IT(&hadc2); 
-    }
-  }    
+      HAL_ADC_Start_IT(&hadc1);  
+  }
+  else if(cnt==2)
+  {
+      current=HAL_ADC_GetValue(&hadc1);  
+      HAL_ADC_Start_IT(&hadc1);    
+  }  
+  else if(cnt==3)
+  {     
+      voltage=HAL_ADC_GetValue(&hadc1); 
+      HAL_ADC_Start_IT(&hadc1);    
+  }            
 }
 void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef*huart,uint16_t Size){
 	if(huart == &huart3){
@@ -418,7 +410,7 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef*huart,uint16_t Size){
       }
     }
 		__HAL_UNLOCK(huart);														 //串口解锁
-		HAL_UARTEx_ReceiveToIdle_DMA(huart,rx_buf,127);  //重新�???始接�???
+		HAL_UARTEx_ReceiveToIdle_DMA(huart,rx_buf,127);  //重新�????始接�????
 	}
 }
 /* USER CODE END 1 */
