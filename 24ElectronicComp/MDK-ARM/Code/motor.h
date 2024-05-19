@@ -31,6 +31,8 @@ extern int16_t X_last;
 extern int16_t Y_now;
 extern int16_t Y_last;
 extern int16_t x_speed;
+extern float current;
+extern float voltage;
 
 void spd_pid_init(void);
 void set_loc(uint16_t tar_loc,uint16_t now_loc);
