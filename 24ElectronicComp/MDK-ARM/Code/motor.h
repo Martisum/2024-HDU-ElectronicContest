@@ -21,6 +21,15 @@ typedef struct {
     int16_t pwm_out;
 } PID;
 
+//actual pwm=47 is highest 
+//actual pwm=82 is horizon
+//actual pwm=107 is lowest    
+//105 -3 degree 
+//47  +2.6 deg      99 -2.6 deg
+#define UP_DEG_PWM 99
+#define DOWN_DEG_PWM 47
+#define HORIZON_DEG_PWM 80
+
 extern PID speed,location;
 extern float spd_kp,spd_ki,spd_kd;
 extern float dis_kp,dis_ki,dis_kd;
@@ -31,9 +40,10 @@ extern int16_t X_last;
 extern int16_t Y_now;
 extern int16_t Y_last;
 extern int16_t x_speed;
-extern uint8_t oscillation_tar;
+extern uint16_t oscillation_tar;
 extern float current;
 extern float voltage;
+extern int16_t location_target;
 
 uint8_t abs_distance(int16_t a,int16_t b);
 void spd_pid_init(void);

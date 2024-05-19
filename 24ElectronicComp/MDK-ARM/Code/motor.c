@@ -6,8 +6,12 @@
 #include "oled.h"
 #include "math.h"
 
-float spd_kp=1.5,spd_ki=0,spd_kd=0;
-float dis_kp=-0.3,dis_ki=-0.03,dis_kd=0;
+//best
+// float spd_kp=1.5,spd_ki=0,spd_kd=0;
+// float dis_kp=-0.3,dis_ki=-0.03,dis_kd=0;
+
+float spd_kp=2.5,spd_ki=0,spd_kd=0;
+float dis_kp=-0.5,dis_ki=-0.05,dis_kd=0;
 
 int16_t X_now = 0;
 int16_t X_last = 0;
@@ -19,18 +23,11 @@ float voltage=0;
 
 //control_state is 0:stop, 1:speed PID only, 2:speed and location PID
 uint8_t control_state=0;
-uint8_t oscillation_tar=0;
+uint16_t oscillation_tar=0;
 
 PID speed,location;
+int16_t location_target=10;
 
-//actual pwm=47 is highest 
-//actual pwm=82 is horizon
-//actual pwm=107 is lowest    
-//105 -3 degree 
-//47  +2.6 deg      99 -2.6 deg
-#define UP_DEG_PWM 99
-#define DOWN_DEG_PWM 47
-#define HORIZON_DEG_PWM 80
 
 uint16_t HORIZON_PWM=80;
 
@@ -50,16 +47,18 @@ uint8_t abs_distance(int16_t a,int16_t b){
 }
 
 void set_loc(uint16_t tar_loc,uint16_t now_loc){
+    if(tar_loc==now_loc) location.sum_error=0;
+
     location.set_targetS=tar_loc;
     location.now_error=location.set_targetS-now_loc;
 
     location.sum_error+=location.now_error;
-    if(location.sum_error>200) location.sum_error=200;
-    else if(location.sum_error<-200) location.sum_error=-200;
+    if(location.sum_error>250) location.sum_error=250;
+    else if(location.sum_error<-250) location.sum_error=-250;
 
     location.pwm_out=location.PS*location.now_error+location.IS*location.sum_error+location.DS*(location.now_error-location.pre_error);
-    if(location.pwm_out>200) location.pwm_out=200;
-    else if(location.pwm_out<-200) location.pwm_out=-200;
+    if(location.pwm_out>250) location.pwm_out=250;
+    else if(location.pwm_out<-250) location.pwm_out=-250;
     
     location.pre_error=location.now_error;
 }

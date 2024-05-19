@@ -2,8 +2,8 @@
 #define __MENU_H
 #include "main.h"
 
-#define MAX_ADC_VAL 3000
-#define MIN_ADC_BAL 1000
+#define MAX_ADC_VAL 4000
+#define MIN_ADC_BAL 100
 extern uint32_t ADCY;
 extern uint32_t ADCX;
 struct item                                     
@@ -61,10 +61,11 @@ struct page
 // #define KEY_5       B12                     //enter
 // #define KEY_6       D11                     //leave
 /***************************************************************************************************/
-#define KEY_DelayTime   100                     //����ɨ����ʱʱ��
+#define KEY_DelayTime   100                    
 extern uint32_t cntpage;//ҳ��
 extern struct page *navigate[32];//ָ��
 
+// void ADC_Get_Value(void);
 uint8_t key_scan(void);
 void add_subpage(struct page * tg, char * name, struct page * v);
 void add_value(struct page * tg, char * name, int * v, int16_t dt, void (*changedCallBack)());

@@ -1,8 +1,4 @@
-*** Using Compiler 'V5.06 update 6 (build 750)', folder: 'D:\ProgramFiles\Keil5\ARM\ARMCC\Bin'
-Build target '24ElectronicComp'
-compiling stm32f4xx_it.c...
-linking...
-Program Size: Code=30268 RO-data=41932 RW-data=908 ZI-data=15836  
-FromELF: creating hex file...
-"..\..\..\..\24ElectronicComp.axf" - 0 Error(s), 0 Warning(s).
-Build Time Elapsed:  00:00:05
+Load "..\\..\\..\\..\\24ElectronicComp.axf" 
+RDDI-DAP Error
+Error: Flash Download failed  -  Target DLL has been cancelled
+Flash Load finished at 16:58:59
