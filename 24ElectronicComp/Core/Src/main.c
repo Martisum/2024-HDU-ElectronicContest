@@ -296,23 +296,23 @@ void location_wave(void)
     
   while (1)
   {
-      for(uint8_t i=0;i<MAX_DATALEN;i++) 
-      {
-        uint16_t Lwave = 64-(loca_wave[i]*64/300);
-        OLED_ClearPoint(i,Lwave);
-      }         
-      if(locacnt < MAX_DATALEN)//loca_wave数据保存
-			{
-				loca_wave[locacnt++] = X_now;
-			}
-			else
-			{
-				memcpy((void *)loca_wave, (void *)(loca_wave + 1), sizeof(loca_wave[0]) * (MAX_DATALEN - 1));
-				loca_wave[MAX_DATALEN - 1] = X_now;
-			}
+    for(uint8_t i=0;i<MAX_DATALEN;i++) 
+    {
+      uint16_t Lwave = loca_wave[i]*64/300;
+      OLED_ClearPoint(i,Lwave);
+    }         
+    if(locacnt < MAX_DATALEN)//loca_wave数据保存
+    {
+      loca_wave[locacnt++] = X_now;
+    }
+    else
+    {
+      memcpy((void *)loca_wave, (void *)(loca_wave + 1), sizeof(loca_wave[0]) * (MAX_DATALEN - 1));
+      loca_wave[MAX_DATALEN - 1] = X_now;
+    }
     for (uint8_t i = 0; i < MAX_DATALEN ; i++)
     {
-      uint16_t Lwave = 64-(loca_wave[i]*64/300);
+      uint16_t Lwave = loca_wave[i]*64/300;
       OLED_DrawPoint(i,Lwave);
     }
     OLED_Refresh();
@@ -399,6 +399,31 @@ void loc_wave_oscillation(void)
     }  
   }
 }
+void Current_Voltage(void)
+{
+  oled_clear();
+  oled_show_string(0, 0, "Show_Current_Voltage");
+  HAL_TIM_Base_Start_IT(&htim7);
+  HAL_ADC_Start_IT(&hadc1);  
+  while (1)
+  {
+    oled_show_string(0, 1, "Current:");
+    oled_show_float(50,1,current,5,3);
+    oled_show_string(0, 2, "Voltage:");
+    oled_show_float(50,2,voltage,5,3);
+
+    HAL_Delay(10);
+    if (ADCY > MAX_ADC_VAL) {
+      HAL_Delay(KEY_DelayTime);
+      if (ADCY > MAX_ADC_VAL) {
+        OLED_GClear(); 
+        HAL_TIM_Base_Stop_IT(&htim7);
+        MenuRender(1);
+        return;
+      }
+    }  
+  }
+}
 
 /* USER CODE END 0 */
 
@@ -440,6 +465,7 @@ int main(void)
   MX_DAC_Init();
   MX_TIM10_Init();
   MX_USART3_UART_Init();
+  MX_ADC2_Init();
   /* USER CODE BEGIN 2 */
   printf("SYSTEM START\r\n");
   oled_init();
@@ -523,6 +549,7 @@ void menu_init(void)
   add_func(&p0, "<sin_wave_gen>", sin_wave_gen);
   add_func(&p0, "<square_wave_gen>", square_wave_gen);
   add_func(&p0, "<speed_control>", speed_control);
+  add_func(&p0, "<Current_Voltage>", Current_Voltage);
   add_func(&p0, "<angle_confirm>", angle_confirm);
   add_subpage(&p0, "<pid>", &p1);
   add_subpage(&p0, "<param>", &p2);

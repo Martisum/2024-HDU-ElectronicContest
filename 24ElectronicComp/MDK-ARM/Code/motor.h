@@ -32,6 +32,8 @@ extern int16_t Y_now;
 extern int16_t Y_last;
 extern int16_t x_speed;
 extern uint8_t oscillation_tar;
+extern float current;
+extern float voltage;
 
 uint8_t abs_distance(int16_t a,int16_t b);
 void spd_pid_init(void);

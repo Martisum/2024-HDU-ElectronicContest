@@ -3,17 +3,17 @@
         {
             "name": "24ElectronicComp",
             "includePath": [
-                "d:\\Work\\STM32\\2024ElectronicDesignComp\\SourceCode\\24ElectronicComp\\Core\\Inc",
-                "d:\\Work\\STM32\\2024ElectronicDesignComp\\SourceCode\\24ElectronicComp\\Drivers\\STM32F4xx_HAL_Driver\\Inc",
-                "d:\\Work\\STM32\\2024ElectronicDesignComp\\SourceCode\\24ElectronicComp\\Drivers\\STM32F4xx_HAL_Driver\\Inc\\Legacy",
-                "d:\\Work\\STM32\\2024ElectronicDesignComp\\SourceCode\\24ElectronicComp\\Drivers\\CMSIS\\Device\\ST\\STM32F4xx\\Include",
-                "d:\\Work\\STM32\\2024ElectronicDesignComp\\SourceCode\\24ElectronicComp\\Drivers\\CMSIS\\Include",
-                "d:\\Work\\STM32\\2024ElectronicDesignComp\\SourceCode\\24ElectronicComp\\MDK-ARM\\Code",
-                "C:\\Keil_v5\\ARM\\ARMCC\\include",
-                "C:\\Keil_v5\\ARM\\ARMCC\\include\\rw",
-                "d:\\Work\\STM32\\2024ElectronicDesignComp\\SourceCode\\24ElectronicComp\\MDK-ARM",
-                "d:\\Work\\STM32\\2024ElectronicDesignComp\\SourceCode\\24ElectronicComp\\Core\\Src",
-                "d:\\Work\\STM32\\2024ElectronicDesignComp\\SourceCode\\24ElectronicComp\\Drivers\\STM32F4xx_HAL_Driver\\Src"
+                "d:\\Programming_file\\stm32\\24HDU_Electonic\\source_code\\2024-HDU-ElectronicContest\\24ElectronicComp\\Core\\Inc",
+                "d:\\Programming_file\\stm32\\24HDU_Electonic\\source_code\\2024-HDU-ElectronicContest\\24ElectronicComp\\Drivers\\STM32F4xx_HAL_Driver\\Inc",
+                "d:\\Programming_file\\stm32\\24HDU_Electonic\\source_code\\2024-HDU-ElectronicContest\\24ElectronicComp\\Drivers\\STM32F4xx_HAL_Driver\\Inc\\Legacy",
+                "d:\\Programming_file\\stm32\\24HDU_Electonic\\source_code\\2024-HDU-ElectronicContest\\24ElectronicComp\\Drivers\\CMSIS\\Device\\ST\\STM32F4xx\\Include",
+                "d:\\Programming_file\\stm32\\24HDU_Electonic\\source_code\\2024-HDU-ElectronicContest\\24ElectronicComp\\Drivers\\CMSIS\\Include",
+                "d:\\Programming_file\\stm32\\24HDU_Electonic\\source_code\\2024-HDU-ElectronicContest\\24ElectronicComp\\MDK-ARM\\Code",
+                "D:\\ProgramFiles\\Keil5\\ARM\\ARMCC\\include",
+                "D:\\ProgramFiles\\Keil5\\ARM\\ARMCC\\include\\rw",
+                "d:\\Programming_file\\stm32\\24HDU_Electonic\\source_code\\2024-HDU-ElectronicContest\\24ElectronicComp\\MDK-ARM",
+                "d:\\Programming_file\\stm32\\24HDU_Electonic\\source_code\\2024-HDU-ElectronicContest\\24ElectronicComp\\Core\\Src",
+                "d:\\Programming_file\\stm32\\24HDU_Electonic\\source_code\\2024-HDU-ElectronicContest\\24ElectronicComp\\Drivers\\STM32F4xx_HAL_Driver\\Src"
             ],
             "defines": [
                 "USE_HAL_DRIVER",
