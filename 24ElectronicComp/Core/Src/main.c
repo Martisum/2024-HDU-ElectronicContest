@@ -110,7 +110,7 @@ void sin_wave_gen(void)
 				sin_wave[MAX_DATALEN - 1] = sine[wave_index];
 			}
     }
-    for (uint8_t i = 0; i < MAX_DATALEN ; i++)
+    for (uint8_t i = 0; i < sincnt ; i++)
     {
       uint16_t Pwave = 63-(sin_wave[i]*63/4095);
       OLED_DrawPoint(i,Pwave);
@@ -164,7 +164,7 @@ void square_wave_gen(void)
 				squa_wave[MAX_DATALEN - 1] = square[wave_index];
 			}
     }
-    for (uint8_t i = 0; i < MAX_DATALEN ; i++)
+    for (uint8_t i = 0; i < squacnt ; i++)
     {
       uint16_t Swave = 63-(squa_wave[i]*63/4095);
       OLED_DrawPoint(i,Swave);
@@ -294,14 +294,14 @@ void location_wave(void)
   oled_clear();
   
   HAL_TIM_Base_Start_IT(&htim7);
-  HAL_UARTEx_ReceiveToIdle_DMA(&huart3,rx_buf,127);	
+  HAL_UARTEx_ReceiveToIdle_DMA(&huart3,rx_buf,127);
+  oled_show_string(0, 0, "location:");	
   while (1)
   {
-    oled_show_string(0, 0, "location:");
-    oled_show_int(50, 0, (300-X_now)/5.6,5);
+    oled_show_int(50, 0, (300-X_now)/5.6+1,5);
     for(uint8_t i=0;i<MAX_DATALEN;i++) 
     {
-      uint8_t Lwave = 50- (loca_wave[i]*50/300);
+      uint8_t Lwave = loca_wave[i]*50/300;
       OLED_ClearPoint(i,Lwave);
     }         
     if(locacnt < MAX_DATALEN)//loca_wave数据保存
@@ -313,9 +313,9 @@ void location_wave(void)
       memcpy((void *)loca_wave, (void *)(loca_wave + 1), sizeof(loca_wave[0]) * (MAX_DATALEN - 1));
       loca_wave[MAX_DATALEN - 1] = X_now;
     }
-    for (uint8_t i = 0; i < MAX_DATALEN ; i++)
+    for (uint8_t i = 0; i < locacnt ; i++)
     {
-      uint8_t Lwave = 50- (loca_wave[i]*50/300);
+      uint8_t Lwave = loca_wave[i]*50/300;
       OLED_DrawPoint(i,Lwave);
     }
     OLED_Refresh();
