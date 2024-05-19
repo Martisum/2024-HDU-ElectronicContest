@@ -25,6 +25,7 @@
 #include "menu.h"
 #include "geometry.h"
 #include "dac.h"
+#include "adc.h"
 #include "stdio.h"
 #include "motor.h"
 #include "oled.h"
@@ -61,6 +62,7 @@
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
+extern DMA_HandleTypeDef hdma_adc1;
 extern TIM_HandleTypeDef htim7;
 extern TIM_HandleTypeDef htim10;
 extern DMA_HandleTypeDef hdma_usart3_rx;
@@ -337,8 +339,24 @@ void TIM7_IRQHandler(void)
     //set_servo_angle(location.pwm_out);
     set_servo_angle(speed.pwm_out+location.pwm_out);
   }
-  
+  uint16_t myDAC[4];
+  HAL_ADC_Start_DMA(&hadc1, (uint32_t*)myDAC, 4);
+  printf("myDAC[0]=%d,myDAC[1]=%d,myDAC[2]=%d,myDAC[3]=%d,\n",myDAC[0],myDAC[1],myDAC[2],myDAC[3]);
   /* USER CODE END TIM7_IRQn 1 */
+}
+
+/**
+  * @brief This function handles DMA2 stream0 global interrupt.
+  */
+void DMA2_Stream0_IRQHandler(void)
+{
+  /* USER CODE BEGIN DMA2_Stream0_IRQn 0 */
+
+  /* USER CODE END DMA2_Stream0_IRQn 0 */
+  HAL_DMA_IRQHandler(&hdma_adc1);
+  /* USER CODE BEGIN DMA2_Stream0_IRQn 1 */
+
+  /* USER CODE END DMA2_Stream0_IRQn 1 */
 }
 
 /* USER CODE BEGIN 1 */
@@ -370,7 +388,7 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef*huart,uint16_t Size){
       }
     }
 		__HAL_UNLOCK(huart);														 //串口解锁
-		HAL_UARTEx_ReceiveToIdle_DMA(huart,rx_buf,127);  //重新�?????始接�?????
+		HAL_UARTEx_ReceiveToIdle_DMA(huart,rx_buf,127);  //重新�??????始接�??????
 	}
 }
 /* USER CODE END 1 */

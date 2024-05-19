@@ -63,7 +63,7 @@ int16_t squa_wave[MAX_DATALEN];//square数据缓存
 int16_t squacnt=0;//square数据缓存计数
 int16_t loca_wave[MAX_DATALEN];//location数据缓存
 int16_t locacnt=0;//location数据缓存计数
-int16_t myDAC[4] = {0};
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -473,22 +473,13 @@ int main(void)
   __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_3, HORIZON_PWM);
   spd_pid_init();
   /* USER CODE END 2 */
+
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
     /* USER CODE END WHILE */
-    for(uint8_t i=0;i<4;i++)
-    {
-      HAL_ADC_Start(&hadc1);
-      HAL_ADC_PollForConversion(&hadc1, 0xffff);
-      myDAC[i] = HAL_ADC_GetValue(&hadc1);
-    }
-    HAL_ADC_Stop(&hadc1);  
-    ADCY = myDAC[0];
-    ADCX = myDAC[1];
-    current=myDAC[2];
-    voltage=myDAC[3]  ;
+
     /* USER CODE BEGIN 3 */
     MenuCmd(key_scan());
     if (navigate[cntpage]->dymantic_page)
