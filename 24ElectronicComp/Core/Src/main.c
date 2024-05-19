@@ -72,8 +72,8 @@ void SystemClock_Config(void);
 
 void sin_wave_gen(void)
 {
-  // uint8_t wave_index=0;
-  // uint8_t wave_i=0;
+  uint8_t wave_index=0;
+  uint8_t wave_i=0;
 
   oled_clear();
   oled_show_string(0, 0, "sin_wave_gen()");
@@ -226,8 +226,13 @@ void location_control(void)
     oled_show_string(0,3,(const char *)tmp_string);
     sprintf((char *)tmp_string,"loc_err:%d",location.now_error);
     oled_show_string(0,4,(const char *)tmp_string);
-    sprintf((char *)tmp_string,"total_out:%d",location.pwm_out+speed.pwm_out);
+    sprintf((char *)tmp_string,"sum_err:%d",location.sum_error);
     oled_show_string(0,5,(const char *)tmp_string);
+    sprintf((char *)tmp_string,"loc_out:%d",location.pwm_out);
+    oled_show_string(0,6,(const char *)tmp_string);
+    sprintf((char *)tmp_string,"total_out:%d",location.pwm_out+speed.pwm_out);
+    oled_show_string(0,7,(const char *)tmp_string);
+    oled_clear();
 
     HAL_Delay(10);
 

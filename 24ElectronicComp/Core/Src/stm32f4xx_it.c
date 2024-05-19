@@ -325,6 +325,7 @@ void USART3_IRQHandler(void)
 void TIM7_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM7_IRQn 0 */
+  static uint8_t control_cnt=0;
   /* USER CODE END TIM7_IRQn 0 */
   HAL_TIM_IRQHandler(&htim7);
   /* USER CODE BEGIN TIM7_IRQn 1 */
@@ -337,11 +338,22 @@ void TIM7_IRQHandler(void)
   }
   //When control_state=1, excute the speed and location PID
   else if(control_state==2){
-    x_speed=(X_last-X_now);//单位：mm/s
-    X_last=X_now;
-    spd_pid(0,x_speed);
-    set_loc(200,X_now);
+    control_cnt++;
+    if(control_cnt%2){
+      //change speed PID according to the location
+      if(location.now_error<20 && location.now_error>-20){
+        speed.PS=spd_kp/3;
+      }else{
+        speed.PS=spd_kp;
+      }
+
+      x_speed=(X_last-X_now);//单位：mm/s
+      X_last=X_now;
+      spd_pid(0,x_speed);
+    }
+    set_loc(100,X_now);
     //set_servo_angle(speed.pwm_out);
+    //set_servo_angle(location.pwm_out);
     set_servo_angle(speed.pwm_out+location.pwm_out);
   }
   

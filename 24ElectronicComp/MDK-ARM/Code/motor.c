@@ -6,8 +6,8 @@
 #include "oled.h"
 #include "math.h"
 
-float spd_kp=1,spd_ki=0,spd_kd=0;
-float dis_kp=1,dis_ki=0,dis_kd=0;
+float spd_kp=1.5,spd_ki=0,spd_kd=0;
+float dis_kp=-0.3,dis_ki=-0.03,dis_kd=0;
 
 //control_state is 0:stop, 1:speed PID only, 2:speed and location PID
 uint8_t control_state=0;
@@ -39,9 +39,13 @@ void set_loc(uint16_t tar_loc,uint16_t now_loc){
     location.set_targetS=tar_loc;
     location.now_error=location.set_targetS-now_loc;
 
-    location.pwm_out=location.PS*location.now_error+location.DS*(location.now_error-location.pre_error);
-    if(location.pwm_out>1000) location.pwm_out=1000;
-    else if(location.pwm_out<0) location.pwm_out=0;
+    location.sum_error+=location.now_error;
+    if(location.sum_error>200) location.sum_error=200;
+    else if(location.sum_error<-200) location.sum_error=-200;
+
+    location.pwm_out=location.PS*location.now_error+location.IS*location.sum_error+location.DS*(location.now_error-location.pre_error);
+    if(location.pwm_out>200) location.pwm_out=200;
+    else if(location.pwm_out<-200) location.pwm_out=-200;
     
     location.pre_error=location.now_error;
 }
@@ -60,7 +64,7 @@ void spd_pid(int16_t spd,int now_spd){
     //˵��Ŀ��ֵ�Ǵ�ģ�pwmҪ���Ÿ�
     speed.pwm_out=-1*(speed.PS*speed.now_error+speed.DS*(speed.now_error-speed.pre_error));
     if(speed.pwm_out>1000) speed.pwm_out=1000;
-    else if(speed.pwm_out< -100) speed.pwm_out=0;
+    else if(speed.pwm_out< -1000) speed.pwm_out=-1000;
 
     speed.pre_error=speed.now_error;
 }
