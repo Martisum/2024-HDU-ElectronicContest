@@ -33,6 +33,7 @@
 #include "oled.h"
 #include "geometry.h"
 #include "motor.h"
+#include "string.h"
 
 struct page p0, p1, p2, p3, p4, p5, p6;
 void menu_init(void);
@@ -45,7 +46,7 @@ void menu_init(void);
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+#define MAX_DATALEN 128 //X = 53 --> 128
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -56,7 +57,8 @@ void menu_init(void);
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+int16_t sin_wave[MAX_DATALEN];//俯仰角数据缓存
+int16_t sincnt=0;//俯仰角数据缓存计数
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -82,7 +84,30 @@ void sin_wave_gen(void)
 
   while (1)
   {
-    HAL_Delay(5);
+    wave_i++;
+    if(wave_i>=5/global_freq)
+    {
+      wave_i=0;
+      wave_index++;
+      wave_index%=200;   
+      for(uint8_t i=0;i<MAX_DATALEN;i++) 
+      {
+        OLED_ClearPoint(i,sin_wave[i]*64/4095);
+      }         
+      if(sincnt < MAX_DATALEN)//sine数据保存
+			{
+				sin_wave[sincnt++] = sine[wave_index];
+			}
+			else
+			{
+				memcpy((void *)sin_wave, (void *)(sin_wave + 1), sizeof(sin_wave[0]) * (MAX_DATALEN - 1));
+				sin_wave[MAX_DATALEN - 1] = sine[wave_index];
+			}
+    }
+    for (uint8_t i = 0; i < MAX_DATALEN ; i++)
+				OLED_DrawPoint(i,sin_wave[i]*64/4095 );
+    OLED_Refresh();
+    HAL_Delay(1);
     if (ADCY > MAX_ADC_VAL) {
       HAL_Delay(KEY_DelayTime);
       if (ADCY > MAX_ADC_VAL) {

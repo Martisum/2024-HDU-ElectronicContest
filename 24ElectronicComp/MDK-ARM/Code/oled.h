@@ -2,37 +2,38 @@
 #define __OLED_H
 
 #include "main.h"
-//====================================================Ó²¼þ SPI Çý¶¯====================================================
-//Ó²¼þSPIÇý¶¯ÒÑ¾­ÓÉCUBE³õÊ¼»¯Íê±Ï
-//ÏÂÃæËùÓÐµÄºê¶¨Òå¾ùÔÚmain.hÖÐÊµÏÖ
+//====================================================Ó²ï¿½ï¿½ SPI ï¿½ï¿½ï¿½ï¿½====================================================
+//Ó²ï¿½ï¿½SPIï¿½ï¿½ï¿½ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½CUBEï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÐµÄºê¶¨ï¿½ï¿½ï¿½ï¿½ï¿½main.hï¿½ï¿½Êµï¿½ï¿½
 /*
-#define OLED_SPI_SPEED                  (42 * 1000 * 1000)                      // Ó²¼þ SPI ËÙÂÊ
-#define OLED_SPI                        (SPI_1)                                 // Ó²¼þ SPI ºÅ
-#define OLED_D0_PIN                     (SPI1_SCK_PA5 )                    // Ó²¼þ SPI SCK Òý½Å
-#define OLED_D1_PIN                     (SPI1_MOSI_PA7)                    // Ó²¼þ SPI MOSI Òý½Å
-#define OLED_RES_PIN                    (A3 )                                   // Òº¾§¸´Î»Òý½Å¶¨Òå
-#define OLED_DC_PIN                     (A4 )                                   // Òº¾§ÃüÁîÎ»Òý½Å¶¨Òå
-#define OLED_CS_PIN                     (GND )                                   // CS Æ¬Ñ¡Òý½Å
+#define OLED_SPI_SPEED                  (42 * 1000 * 1000)                      // Ó²ï¿½ï¿½ SPI ï¿½ï¿½ï¿½ï¿½
+#define OLED_SPI                        (SPI_1)                                 // Ó²ï¿½ï¿½ SPI ï¿½ï¿½
+#define OLED_D0_PIN                     (SPI1_SCK_PA5 )                    // Ó²ï¿½ï¿½ SPI SCK ï¿½ï¿½ï¿½ï¿½
+#define OLED_D1_PIN                     (SPI1_MOSI_PA7)                    // Ó²ï¿½ï¿½ SPI MOSI ï¿½ï¿½ï¿½ï¿½
+#define OLED_RES_PIN                    (A3 )                                   // Òºï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½ï¿½Å¶ï¿½ï¿½ï¿½
+#define OLED_DC_PIN                     (A4 )                                   // Òºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½ï¿½Å¶ï¿½ï¿½ï¿½
+#define OLED_CS_PIN                     (GND )                                   // CS Æ¬Ñ¡ï¿½ï¿½ï¿½ï¿½
 */
-//====================================================Ó²¼þ SPI Çý¶¯====================================================
+//====================================================Ó²ï¿½ï¿½ SPI ï¿½ï¿½ï¿½ï¿½====================================================
 
-#define OLED_BRIGHTNESS                 (0x7f)                                  // ÉèÖÃOLEDÁÁ¶È Ô½´óÔ½ÁÁ ·¶Î§0-0XFF
-#define OLED_DEFAULT_DISPLAY_DIR        (OLED_CROSSWISE)                        // Ä¬ÈÏµÄÏÔÊ¾·½Ïò
-#define OLED_DEFAULT_DISPLAY_FONT       (OLED_6X8_FONT )                        // Ä¬ÈÏµÄ×ÖÌåÄ£Ê½
+#define OLED_BRIGHTNESS                 (0x7f)                                  // ï¿½ï¿½ï¿½ï¿½OLEDï¿½ï¿½ï¿½ï¿½ Ô½ï¿½ï¿½Ô½ï¿½ï¿½ ï¿½ï¿½Î§0-0XFF
+#define OLED_DEFAULT_DISPLAY_DIR        (OLED_CROSSWISE)                        // Ä¬ï¿½Ïµï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½
+#define OLED_DEFAULT_DISPLAY_FONT       (OLED_6X8_FONT )                        // Ä¬ï¿½Ïµï¿½ï¿½ï¿½ï¿½ï¿½Ä£Ê½
 
 //#define gpio_low(x)             ((GPIO_TypeDef*)gpio_group[(x>>5)])->BCR   = (uint16)(1 << (x & 0x0F))
+extern unsigned char GRAM[1024];   			//ç¼“å­˜æ˜¾å­˜æ•°ç»„
 
 typedef enum
 {
-    OLED_CROSSWISE                      = 0,                                    // ºáÆÁÄ£Ê½
-    OLED_CROSSWISE_180                  = 1,                                    // ºáÆÁÄ£Ê½  Ðý×ª180
+    OLED_CROSSWISE                      = 0,                                    // ï¿½ï¿½ï¿½ï¿½Ä£Ê½
+    OLED_CROSSWISE_180                  = 1,                                    // ï¿½ï¿½ï¿½ï¿½Ä£Ê½  ï¿½ï¿½×ª180
 }oled_dir_enum;
 
 typedef enum
 {
-    OLED_6X8_FONT                       = 0,                                    // 6x8      ×ÖÌå
-    OLED_8X16_FONT                      = 1,                                    // 8x16     ×ÖÌå
-    OLED_16X16_FONT                     = 2,                                    // 16x16    ×ÖÌå Ä¿Ç°²»Ö§³Ö
+    OLED_6X8_FONT                       = 0,                                    // 6x8      ï¿½ï¿½ï¿½ï¿½
+    OLED_8X16_FONT                      = 1,                                    // 8x16     ï¿½ï¿½ï¿½ï¿½
+    OLED_16X16_FONT                     = 2,                                    // 16x16    ï¿½ï¿½ï¿½ï¿½ Ä¿Ç°ï¿½ï¿½Ö§ï¿½ï¿½
 }oled_font_size_enum;
 
 #define OLED_X_MAX                      (128)
@@ -57,5 +58,11 @@ void    oled_show_chinese               (uint16_t x, uint16_t y, uint8_t size, c
 void    oled_set_coordinate             (uint8_t x, uint8_t y);
 void    oled_write_data                 (const uint8_t data);
 void    oled_init                       (void);
+
+void 		OLED_Refresh 										(void);
+void 		OLED_GFill 											(void);
+void 		OLED_GClear 										(void);
+void 		OLED_DrawPoint									(unsigned char x,unsigned char y);
+void 		OLED_ClearPoint									(unsigned char x,unsigned char y);
 
 #endif
