@@ -292,16 +292,16 @@ void location_wave(void)
 {
   locacnt=0;
   oled_clear();
-  oled_show_string(0, 0, "location_wave()");
+  
   HAL_TIM_Base_Start_IT(&htim7);
   HAL_UARTEx_ReceiveToIdle_DMA(&huart3,rx_buf,127);	
-  //control_state=2;
-    
   while (1)
   {
+    oled_show_string(0, 0, "location:");
+    oled_show_int(50, 0, (300-X_now)/5.6,5);
     for(uint8_t i=0;i<MAX_DATALEN;i++) 
     {
-      uint16_t Lwave = loca_wave[i]*64/300;
+      uint8_t Lwave = 50- (loca_wave[i]*50/300);
       OLED_ClearPoint(i,Lwave);
     }         
     if(locacnt < MAX_DATALEN)//loca_wave数据保存
@@ -315,7 +315,7 @@ void location_wave(void)
     }
     for (uint8_t i = 0; i < MAX_DATALEN ; i++)
     {
-      uint16_t Lwave = loca_wave[i]*64/300;
+      uint8_t Lwave = 50- (loca_wave[i]*50/300);
       OLED_DrawPoint(i,Lwave);
     }
     OLED_Refresh();

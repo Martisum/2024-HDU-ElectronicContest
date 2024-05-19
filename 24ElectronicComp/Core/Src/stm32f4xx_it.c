@@ -323,13 +323,6 @@ void TIM7_IRQHandler(void)
   else if(control_state==2){
     control_cnt++;
     if(control_cnt%2){
-      //change speed PID according to the location
-      // if(location.now_error<20 && location.now_error>-20){
-      //   speed.PS=spd_kp/3;
-      // }else{
-      //   speed.PS=spd_kp;
-      // }
-
       x_speed=(X_last-X_now);//单位：mm/s
       X_last=X_now;
       spd_pid(0,x_speed);
