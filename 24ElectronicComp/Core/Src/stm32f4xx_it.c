@@ -328,10 +328,23 @@ void TIM7_IRQHandler(void)
   /* USER CODE END TIM7_IRQn 0 */
   HAL_TIM_IRQHandler(&htim7);
   /* USER CODE BEGIN TIM7_IRQn 1 */
-  x_speed=(X_last-X_now);//单位：mm/s
-  X_last=X_now;
-  spd_pid(0,x_speed);
-  set_servo_angle(speed.pwm_out);
+  //When control_state=1, excute the speed PID only
+  if(control_state==1){
+    x_speed=(X_last-X_now);//单位：mm/s
+    X_last=X_now;
+    spd_pid(0,x_speed);
+    set_servo_angle(speed.pwm_out);
+  }
+  //When control_state=1, excute the speed and location PID
+  else if(control_state==2){
+    x_speed=(X_last-X_now);//单位：mm/s
+    X_last=X_now;
+    spd_pid(0,x_speed);
+    set_loc(200,X_now);
+    //set_servo_angle(speed.pwm_out);
+    set_servo_angle(speed.pwm_out+location.pwm_out);
+  }
+  
   /* USER CODE END TIM7_IRQn 1 */
 }
 

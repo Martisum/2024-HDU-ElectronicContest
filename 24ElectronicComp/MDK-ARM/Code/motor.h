@@ -3,14 +3,7 @@
 
 #include "main.h"
 
-
 #define PI 3.1415926
-
-/*
-1�ŵ��ʹ��TIM8_CH1��ʹ��TIM1��encoder
-2�ŵ��ʹ��TIM8_CH2��ʹ��TIM2��encoder
-......�Դ�����
-*/
 
 typedef struct {
     int16_t set_targetS;
@@ -32,6 +25,7 @@ extern PID speed,location;
 extern float spd_kp,spd_ki,spd_kd;
 extern float dis_kp,dis_ki,dis_kd;
 extern uint16_t HORIZON_PWM;
+extern uint8_t control_state;
 
 void spd_pid_init(void);
 void set_loc(uint16_t tar_loc,uint16_t now_loc);

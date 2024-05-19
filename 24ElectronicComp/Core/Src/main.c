@@ -70,8 +70,8 @@ void SystemClock_Config(void);
 
 void sin_wave_gen(void)
 {
-  uint8_t wave_index=0;
-  uint8_t wave_i=0;
+  // uint8_t wave_index=0;
+  // uint8_t wave_i=0;
 
   oled_clear();
   oled_show_string(0, 0, "sin_wave_gen()");
@@ -160,12 +160,50 @@ void speed_control(void)
   oled_show_string(0, 0, "speed_control()");
   __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_3, HORIZON_PWM);
   HAL_TIM_Base_Start_IT(&htim7);
-  HAL_UARTEx_ReceiveToIdle_DMA(&huart3,rx_buf,127);			//�??启DMA空闲接收中断
+  HAL_UARTEx_ReceiveToIdle_DMA(&huart3,rx_buf,127);	
+  control_state=1;
   while (1)
   {
     oled_show_int(0,1,speed.now_error,5);
     oled_show_int(0,2,speed.pre_error,5);
     oled_show_int(0,3,speed.pwm_out,5);
+    HAL_Delay(10);
+
+    if (ADCY > MAX_ADC_VAL) {
+      HAL_Delay(KEY_DelayTime);
+      if (ADCY > MAX_ADC_VAL) {
+        HAL_TIM_Base_Stop_IT(&htim7);
+        MenuRender(1);
+        return;
+      }
+    }
+    
+  }
+}
+
+void location_control(void)
+{
+  uint8_t tmp_string[30]={0};
+
+  oled_clear();
+  oled_show_string(0, 0, "location_control()");
+  __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_3, HORIZON_PWM);
+  HAL_TIM_Base_Start_IT(&htim7);
+  HAL_UARTEx_ReceiveToIdle_DMA(&huart3,rx_buf,127);	
+  control_state=2;
+  while (1)
+  {
+    sprintf((char *)tmp_string,"spd_err:%d",speed.now_error);
+    oled_show_string(0,1,(const char *)tmp_string);
+    sprintf((char *)tmp_string,"spd_out:%d",speed.pwm_out);
+    oled_show_string(0,2,(const char *)tmp_string);
+    sprintf((char *)tmp_string,"loc_tar:%d",location.set_targetS);
+    oled_show_string(0,3,(const char *)tmp_string);
+    sprintf((char *)tmp_string,"loc_err:%d",location.now_error);
+    oled_show_string(0,4,(const char *)tmp_string);
+    sprintf((char *)tmp_string,"total_out:%d",location.pwm_out+speed.pwm_out);
+    oled_show_string(0,5,(const char *)tmp_string);
+
     HAL_Delay(10);
 
     if (ADCY > MAX_ADC_VAL) {
@@ -297,10 +335,11 @@ void SystemClock_Config(void)
 /* USER CODE BEGIN 4 */
 void menu_init(void)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
 {
+  add_func(&p0, "<loc_control>", location_control);
+  add_func(&p0, "<speed_control>", speed_control);
   add_func(&p0, "<sin_wave_gen>", sin_wave_gen);
   add_func(&p0, "<square_wave_gen>", square_wave_gen);
   add_func(&p0, "<angle_confirm>", angle_confirm);
-  add_func(&p0, "<speed_control>", speed_control);
   add_subpage(&p0, "<pid>", &p1);
   add_subpage(&p0, "<param>", &p2);
 
