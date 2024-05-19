@@ -89,14 +89,14 @@ void sin_wave_gen(void)
   while (1)
   {
     wave_i++;
-    if(wave_i>=5/global_freq)
+    if(wave_i>=global_freq)
     {
       wave_i=0;
       wave_index++;
       wave_index%=200;   
       for(uint8_t i=0;i<MAX_DATALEN;i++) 
       {
-        uint16_t Pwave = 64-(sin_wave[i]*64/4095);
+        uint16_t Pwave = 63-(sin_wave[i]*63/4095);
         OLED_ClearPoint(i,Pwave);
       }         
       if(sincnt < MAX_DATALEN)//sine数据保存
@@ -111,8 +111,8 @@ void sin_wave_gen(void)
     }
     for (uint8_t i = 0; i < MAX_DATALEN ; i++)
     {
-      uint16_t Pwave = 64-(sin_wave[i]*64/4095);
-      OLED_ClearPoint(i,Pwave);
+      uint16_t Pwave = 63-(sin_wave[i]*63/4095);
+      OLED_DrawPoint(i,Pwave);
     }
     OLED_Refresh();
     HAL_Delay(1);
@@ -120,10 +120,7 @@ void sin_wave_gen(void)
       HAL_Delay(KEY_DelayTime);
       if (ADCY > MAX_ADC_VAL) {
           global_wave_type=0;
-          for(uint8_t i=0;i<MAX_DATALEN;i++) 
-          {
-            sin_wave[i]=0;
-          }    
+          OLED_GClear(); 
           HAL_TIM_Base_Stop_IT(&htim10);
           MenuRender(1);
           return;
@@ -146,14 +143,14 @@ void square_wave_gen(void)
   while (1)
   {
     wave_i++;
-    if(wave_i>=5/global_freq)
+    if(wave_i>=global_freq)
     {
       wave_i=0;
       wave_index++;
       wave_index%=200;   
       for(uint8_t i=0;i<MAX_DATALEN;i++) 
       {
-        uint16_t Swave = 64-(squa_wave[i]*64/4095);
+        uint16_t Swave = 63-(squa_wave[i]*63/4095);
         OLED_ClearPoint(i,Swave);
       }         
       if(squacnt < MAX_DATALEN)//squa数据保存
@@ -168,8 +165,8 @@ void square_wave_gen(void)
     }
     for (uint8_t i = 0; i < MAX_DATALEN ; i++)
     {
-      uint16_t Swave = 64-(squa_wave[i]*64/4095);
-      OLED_ClearPoint(i,Swave);
+      uint16_t Swave = 63-(squa_wave[i]*63/4095);
+      OLED_DrawPoint(i,Swave);
     }
     OLED_Refresh();
     HAL_Delay(1);
@@ -177,10 +174,7 @@ void square_wave_gen(void)
       HAL_Delay(KEY_DelayTime);
       if (ADCY > MAX_ADC_VAL) {
           global_wave_type=0;
-          for(uint8_t i=0;i<MAX_DATALEN;i++) 
-          {
-            squa_wave[i]=0;
-          }    
+          OLED_GClear(); 
           HAL_TIM_Base_Stop_IT(&htim10);
           MenuRender(1);
           return;
@@ -317,7 +311,7 @@ void location_wave(void)
     for (uint8_t i = 0; i < MAX_DATALEN ; i++)
     {
       uint16_t Lwave = 64-(loca_wave[i]*64/300);
-      OLED_ClearPoint(i,Lwave);
+      OLED_DrawPoint(i,Lwave);
     }
     OLED_Refresh();
     HAL_Delay(1);
@@ -325,10 +319,7 @@ void location_wave(void)
     if (ADCY > MAX_ADC_VAL) {
       HAL_Delay(KEY_DelayTime);
       if (ADCY > MAX_ADC_VAL) {
-        for(uint8_t i=0;i<MAX_DATALEN;i++) 
-        {
-          squa_wave[i]=0;
-        }    
+        OLED_GClear(); 
         HAL_TIM_Base_Stop_IT(&htim7);
         MenuRender(1);
         return;
@@ -456,9 +447,10 @@ void SystemClock_Config(void)
 void menu_init(void)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
 {
   add_func(&p0, "<loc_control>", location_control);
-  add_func(&p0, "<speed_control>", speed_control);
+  add_func(&p0, "<location_wave>", location_wave);
   add_func(&p0, "<sin_wave_gen>", sin_wave_gen);
   add_func(&p0, "<square_wave_gen>", square_wave_gen);
+  add_func(&p0, "<speed_control>", speed_control);
   add_func(&p0, "<angle_confirm>", angle_confirm);
   add_subpage(&p0, "<pid>", &p1);
   add_subpage(&p0, "<param>", &p2);
