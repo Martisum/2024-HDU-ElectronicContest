@@ -487,6 +487,13 @@ int main(void)
         MenuRender(0);
         HAL_Delay(100);
     }
+    uint16_t myDAC[4];
+    HAL_ADC_Start_DMA(&hadc1, (uint32_t*)myDAC, 4);
+    ADCY = myDAC[0];
+    ADCX = myDAC[3];
+    current = myDAC[1]*3.3/4095*10;
+    voltage = myDAC[2]*3.3/4095*10;
+    printf("myDAC[0]=%d,myDAC[1]=%d,myDAC[2]=%d,myDAC[3]=%d,\n",myDAC[0],myDAC[1],myDAC[2],myDAC[3]);
   }
   /* USER CODE END 3 */
 }

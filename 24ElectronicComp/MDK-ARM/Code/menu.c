@@ -594,7 +594,7 @@ uint8_t key_scan(void)
       }
   }
   if (ADCY < MIN_ADC_BAL) {
-      HAL_Delay(100);
+      HAL_Delay(KEY_DelayTime);
       if (ADCY < MIN_ADC_BAL) {
 
           printf("KEY_UP;\n");
@@ -602,21 +602,21 @@ uint8_t key_scan(void)
       }
   }
   if (ADCX > MAX_ADC_VAL) {
-      HAL_Delay(100);
+      HAL_Delay(KEY_DelayTime);
       if (ADCX > MAX_ADC_VAL) {
           printf("KEY_SUB;\n");
           return KEY_SUB;
       }
   }
   if (ADCX < MIN_ADC_BAL) {
-      HAL_Delay(100);
+      HAL_Delay(KEY_DelayTime);
       if (ADCX < MIN_ADC_BAL) {
           printf("KEY_ADD;\n");
           return KEY_ADD;
       }
   }
   if (HAL_GPIO_ReadPin(GPIOE,GPIO_PIN_2) == 0) {
-      HAL_Delay(100);
+      HAL_Delay(KEY_DelayTime);
       if ((HAL_GPIO_ReadPin(GPIOE,GPIO_PIN_2) == 0)) {
           printf("KEY_ENTER;\n");
           return KEY_ENTER;

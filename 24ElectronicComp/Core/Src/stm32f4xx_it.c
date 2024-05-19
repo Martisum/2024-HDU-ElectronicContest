@@ -388,7 +388,7 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef*huart,uint16_t Size){
       }
     }
 		__HAL_UNLOCK(huart);														 //串口解锁
-		HAL_UARTEx_ReceiveToIdle_DMA(huart,rx_buf,127);  //重新�??????始接�??????
+		HAL_UARTEx_ReceiveToIdle_DMA(huart,rx_buf,127);  //重新�???????始接�???????
 	}
 }
 /* USER CODE END 1 */
