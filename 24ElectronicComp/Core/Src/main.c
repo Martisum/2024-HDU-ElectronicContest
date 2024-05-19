@@ -260,8 +260,9 @@ void location_control(void)
     sprintf((char *)tmp_string,"spd_err:%d",speed.now_error);
     oled_show_string(0,1,(const char *)tmp_string);
     sprintf((char *)tmp_string,"spd_out:%d",speed.pwm_out);
-    oled_show_string(0,2,(const char *)tmp_string);
-    sprintf((char *)tmp_string,"loc_tar:%d",location.set_targetS);
+    // oled_show_string(0,2,(const char *)tmp_string);
+    // sprintf((char *)tmp_string,"actual_loc:%d",(uint8_t)(300-X_now)/5.6);
+    oled_show_int(0,2,(300-X_now)/5.6,5);
     oled_show_string(0,3,(const char *)tmp_string);
     sprintf((char *)tmp_string,"loc_err:%d",location.now_error);
     oled_show_string(0,4,(const char *)tmp_string);
@@ -294,6 +295,7 @@ void location_wave(void)
   oled_show_string(0, 0, "location_wave()");
   HAL_TIM_Base_Start_IT(&htim7);
   HAL_UARTEx_ReceiveToIdle_DMA(&huart3,rx_buf,127);	
+  //control_state=2;
     
   while (1)
   {
@@ -322,6 +324,7 @@ void location_wave(void)
     if (ADCY > MAX_ADC_VAL) {
       HAL_Delay(KEY_DelayTime);
       if (ADCY > MAX_ADC_VAL) {
+        control_state=0;
         OLED_GClear(); 
         HAL_TIM_Base_Stop_IT(&htim7);
         MenuRender(1);
@@ -340,29 +343,31 @@ void loc_wave_oscillation(void)
   HAL_UARTEx_ReceiveToIdle_DMA(&huart3,rx_buf,127);	
 
   uint8_t coincident_cnt=0; //record the coincident time when ball is in the resonable range of target
-  control_state=2; //turn control_state to enable speed and location PID
-  oscillation_tar=100; //set the initial target
-  location.set_targetS=oscillation_tar; 
+  oscillation_tar=130; //set the initial target
+   __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_3,UP_DEG_PWM-10);
     
   while (1)
   {
-      if(my_abs(X_now,oscillation_tar)<20){
+      if(my_abs(X_now,oscillation_tar)<30){
         coincident_cnt++;
       }
-
+      printf("X_now=%d\r\n",X_now);
+      printf("coincident_cnt=%d\r\n",coincident_cnt);
       //change the oscillation_tar to achieve the sin wave
-      if(coincident_cnt>100){
-        if(oscillation_tar==100){
-          oscillation_tar=200;
-          location.set_targetS=oscillation_tar; 
+      if(coincident_cnt>2){
+        if(oscillation_tar==130){
+          oscillation_tar=170;
           printf("oscillation_tar=%d\r\n",oscillation_tar);
           coincident_cnt=0;
+          __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_3,DOWN_DEG_PWM+10*2);
+          // __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_3,UP_DEG_PWM);
         }
-        else if(oscillation_tar==200){
-          oscillation_tar=100;
-          location.set_targetS=oscillation_tar; 
+        else if(oscillation_tar==170){
+          oscillation_tar=130;
           printf("oscillation_tar=%d\r\n",oscillation_tar);
           coincident_cnt=0;
+          
+          __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_3,UP_DEG_PWM-10);
         }
       }
 
@@ -472,6 +477,10 @@ int main(void)
   HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_3);
   __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_3, HORIZON_PWM);
   spd_pid_init();
+
+  // HAL_Delay(3000);
+  // loc_wave_oscillation();
+
   /* USER CODE END 2 */
 
   /* Infinite loop */

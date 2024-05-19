@@ -324,11 +324,11 @@ void TIM7_IRQHandler(void)
     control_cnt++;
     if(control_cnt%2){
       //change speed PID according to the location
-      if(location.now_error<20 && location.now_error>-20){
-        speed.PS=spd_kp/3;
-      }else{
-        speed.PS=spd_kp;
-      }
+      // if(location.now_error<20 && location.now_error>-20){
+      //   speed.PS=spd_kp/3;
+      // }else{
+      //   speed.PS=spd_kp;
+      // }
 
       x_speed=(X_last-X_now);//单位：mm/s
       X_last=X_now;
@@ -339,9 +339,6 @@ void TIM7_IRQHandler(void)
     //set_servo_angle(location.pwm_out);
     set_servo_angle(speed.pwm_out+location.pwm_out);
   }
-  uint16_t myDAC[4];
-  HAL_ADC_Start_DMA(&hadc1, (uint32_t*)myDAC, 4);
-  printf("myDAC[0]=%d,myDAC[1]=%d,myDAC[2]=%d,myDAC[3]=%d,\n",myDAC[0],myDAC[1],myDAC[2],myDAC[3]);
   /* USER CODE END TIM7_IRQn 1 */
 }
 
@@ -388,7 +385,7 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef*huart,uint16_t Size){
       }
     }
 		__HAL_UNLOCK(huart);														 //串口解锁
-		HAL_UARTEx_ReceiveToIdle_DMA(huart,rx_buf,127);  //重新�???????始接�???????
+		HAL_UARTEx_ReceiveToIdle_DMA(huart,rx_buf,127);  //重新�???????始接�???????
 	}
 }
 /* USER CODE END 1 */
