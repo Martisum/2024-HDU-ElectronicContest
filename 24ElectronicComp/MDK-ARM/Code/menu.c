@@ -586,26 +586,27 @@ void MenuCmd(char cmd)
 uint32_t ADCY = 0;
 uint32_t ADCX = 0;
 
-void ADC_Get_Value(void)
-{
-  for(uint8_t i=0;i<4;i++)
-  {
-    HAL_ADC_Start(&hadc1);
-    HAL_ADC_PollForConversion(&hadc1, 20);
-    switch(i)
-    {
-      case 0: ADCY = HAL_ADC_GetValue(&hadc1);break;
-      case 1: ADCX = HAL_ADC_GetValue(&hadc1);break;
-      case 2: current = HAL_ADC_GetValue(&hadc1);break;
-      case 3: voltage = HAL_ADC_GetValue(&hadc1);break;
-    }
-  }
-
-}
+// void ADC_Get_Value(void)
+// {
+//   for(uint8_t i=0;i<4;i++)
+//   {
+//     HAL_ADC_Start(&hadc1);
+//     HAL_ADC_PollForConversion(&hadc1, 20);
+//     switch(i)
+//     {
+//       case 0: ADCY = HAL_ADC_GetValue(&hadc1);break;
+//       case 1: ADCX = HAL_ADC_GetValue(&hadc1);break;
+//       case 2: current = HAL_ADC_GetValue(&hadc1);break;
+//       case 3: voltage = HAL_ADC_GetValue(&hadc1);break;
+//     }
+//   }
+//   printf("ADCY:%d,ADCX:%d\n",ADCY,ADCX);
+//   printf("current:%d,voltage:%d\n",current,voltage);
+// }
 
 uint8_t key_scan(void) 
 {
-  ADC_Get_Value();
+  // ADC_Get_Value();
   if (ADCY > MAX_ADC_VAL) {
       HAL_Delay(100);
       if (ADCY > MAX_ADC_VAL) {

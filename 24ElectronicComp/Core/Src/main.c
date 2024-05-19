@@ -466,16 +466,18 @@ int main(void)
   MX_DAC_Init();
   MX_TIM10_Init();
   MX_USART3_UART_Init();
+  MX_TIM11_Init();
   /* USER CODE BEGIN 2 */
   printf("SYSTEM START\r\n");
   oled_init();
   menu_init();
   sin_basedata(); //basic sin function data generate
   square_basedata(); //basic square function data generate
-  HAL_ADC_Start(&hadc1);
+  HAL_ADC_Start_IT(&hadc1);
   HAL_DAC_Start(&hdac,DAC_CHANNEL_1);
   HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_3);
   __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_3, HORIZON_PWM);
+  // HAL_TIM_Base_Start_IT(&htim11);
   spd_pid_init();
 
   // HAL_Delay(3000);
@@ -496,13 +498,6 @@ int main(void)
         MenuRender(0);
         HAL_Delay(100);
     }
-    uint16_t myDAC[4];
-    HAL_ADC_Start_DMA(&hadc1, (uint32_t*)myDAC, 4);
-    ADCY = myDAC[0];
-    ADCX = myDAC[3];
-    current = myDAC[1]*3.3/4095*10;
-    voltage = myDAC[2]*3.3/4095*10;
-    printf("myDAC[0]=%d,myDAC[1]=%d,myDAC[2]=%d,myDAC[3]=%d,\n",myDAC[0],myDAC[1],myDAC[2],myDAC[3]);
   }
   /* USER CODE END 3 */
 }
@@ -565,6 +560,7 @@ void menu_init(void)
   add_subpage(&p0, "<pid>", &p1);
   add_subpage(&p0, "<param>", &p2);
 
+  add_value(&p2, "[loc_target]", (int *)&location_target, 1, NULL);
   add_value(&p2, "[global_freq]", (int *)&global_freq, 1, NULL);
   add_value(&p2, "[HORIZON_PWM]", (int *)&HORIZON_PWM, 1, NULL);
 

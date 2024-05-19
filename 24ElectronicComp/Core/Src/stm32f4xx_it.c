@@ -62,8 +62,10 @@
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
+extern ADC_HandleTypeDef hadc1;
 extern TIM_HandleTypeDef htim7;
 extern TIM_HandleTypeDef htim10;
+extern TIM_HandleTypeDef htim11;
 extern DMA_HandleTypeDef hdma_usart3_rx;
 extern DMA_HandleTypeDef hdma_usart3_tx;
 extern UART_HandleTypeDef huart1;
@@ -252,6 +254,20 @@ void DMA1_Stream3_IRQHandler(void)
 }
 
 /**
+  * @brief This function handles ADC1, ADC2 and ADC3 global interrupts.
+  */
+void ADC_IRQHandler(void)
+{
+  /* USER CODE BEGIN ADC_IRQn 0 */
+
+  /* USER CODE END ADC_IRQn 0 */
+  HAL_ADC_IRQHandler(&hadc1);
+  /* USER CODE BEGIN ADC_IRQn 1 */
+
+  /* USER CODE END ADC_IRQn 1 */
+}
+
+/**
   * @brief This function handles TIM1 update interrupt and TIM10 global interrupt.
   */
 void TIM1_UP_TIM10_IRQHandler(void)
@@ -271,6 +287,20 @@ void TIM1_UP_TIM10_IRQHandler(void)
     HAL_DAC_SetValue(&hdac,DAC_CHANNEL_1,DAC_ALIGN_12B_R,square_wave_u16[wave_index]);	
   }
   /* USER CODE END TIM1_UP_TIM10_IRQn 1 */
+}
+
+/**
+  * @brief This function handles TIM1 trigger and commutation interrupts and TIM11 global interrupt.
+  */
+void TIM1_TRG_COM_TIM11_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM1_TRG_COM_TIM11_IRQn 0 */
+
+  /* USER CODE END TIM1_TRG_COM_TIM11_IRQn 0 */
+  HAL_TIM_IRQHandler(&htim11);
+  /* USER CODE BEGIN TIM1_TRG_COM_TIM11_IRQn 1 */
+  // ADC_Get_Value();
+  /* USER CODE END TIM1_TRG_COM_TIM11_IRQn 1 */
 }
 
 /**
@@ -326,7 +356,7 @@ void TIM7_IRQHandler(void)
       X_last=X_now;
       spd_pid(0,x_speed);
     }
-    set_loc(100,X_now);
+    set_loc(300-(location_target-1)*5.6,X_now);
     //set_servo_angle(speed.pwm_out);
     //set_servo_angle(location.pwm_out);
     set_servo_angle(speed.pwm_out+location.pwm_out);
@@ -363,7 +393,20 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef*huart,uint16_t Size){
       }
     }
 		__HAL_UNLOCK(huart);														 //串口解锁
-		HAL_UARTEx_ReceiveToIdle_DMA(huart,rx_buf,127);  //重新�????????始接�????????
+		HAL_UARTEx_ReceiveToIdle_DMA(huart,rx_buf,127);  //重新�?????????始接�?????????
 	}
+}
+
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef*hadc){
+  static uint8_t cnt=0;
+  cnt++;
+  cnt%=2;
+  if(cnt==0){
+    ADCY=HAL_ADC_GetValue(&hadc1);
+    HAL_ADC_Start_IT(&hadc1);
+  }else if(cnt==1){
+    ADCX=HAL_ADC_GetValue(&hadc1);
+    HAL_ADC_Start_IT(&hadc1);
+  }
 }
 /* USER CODE END 1 */

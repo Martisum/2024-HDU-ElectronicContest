@@ -10,7 +10,7 @@
 // float spd_kp=1.5,spd_ki=0,spd_kd=0;
 // float dis_kp=-0.3,dis_ki=-0.03,dis_kd=0;
 
-float spd_kp=3,spd_ki=0,spd_kd=0;
+float spd_kp=2.5,spd_ki=0,spd_kd=0;
 float dis_kp=-0.5,dis_ki=-0.05,dis_kd=0;
 
 int16_t X_now = 0;
@@ -26,7 +26,7 @@ uint8_t control_state=0;
 uint16_t oscillation_tar=0;
 
 PID speed,location;
-
+int16_t location_target=10;
 
 
 uint16_t HORIZON_PWM=80;
