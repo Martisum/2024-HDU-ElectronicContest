@@ -9,6 +9,12 @@
 float spd_kp=1,spd_ki=0,spd_kd=0;
 float dis_kp=1,dis_ki=0,dis_kd=0;
 
+int16_t X_now = 0;
+int16_t X_last = 0;
+int16_t Y_now=0;
+int16_t Y_last=0;
+int16_t x_speed=0;
+
 //control_state is 0:stop, 1:speed PID only, 2:speed and location PID
 uint8_t control_state=0;
 
@@ -60,7 +66,7 @@ void spd_pid(int16_t spd,int now_spd){
     //˵��Ŀ��ֵ�Ǵ�ģ�pwmҪ���Ÿ�
     speed.pwm_out=-1*(speed.PS*speed.now_error+speed.DS*(speed.now_error-speed.pre_error));
     if(speed.pwm_out>1000) speed.pwm_out=1000;
-    else if(speed.pwm_out< -100) speed.pwm_out=0;
+    else if(speed.pwm_out< -100) speed.pwm_out=-100;
 
     speed.pre_error=speed.now_error;
 }

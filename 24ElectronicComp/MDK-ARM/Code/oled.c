@@ -678,7 +678,7 @@ void oled_init (void)
 void OLED_Refresh (void)
 {
     uint8_t y = 0, x = 0;
-		unsigned int j = 0;	
+	unsigned int j = 0;	
     for(y = 0; 8 > y; y ++)
     {
         oled_set_coordinate(0, y);
@@ -697,7 +697,7 @@ void OLED_Refresh (void)
 //-------------------------------------------------------------------------------------------------------------------
 void OLED_GFill (void)
 {   
-		unsigned int t = 0;	
+    unsigned int t = 0;	
     for(t = 0; t<1024; t++)
     {
         GRAM[t] = 0xFF;

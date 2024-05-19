@@ -26,6 +26,11 @@ extern float spd_kp,spd_ki,spd_kd;
 extern float dis_kp,dis_ki,dis_kd;
 extern uint16_t HORIZON_PWM;
 extern uint8_t control_state;
+extern int16_t X_now;
+extern int16_t X_last;
+extern int16_t Y_now;
+extern int16_t Y_last;
+extern int16_t x_speed;
 
 void spd_pid_init(void);
 void set_loc(uint16_t tar_loc,uint16_t now_loc);

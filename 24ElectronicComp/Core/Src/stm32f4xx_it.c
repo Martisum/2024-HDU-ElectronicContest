@@ -47,11 +47,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
-int16_t X_now = 0;
-int16_t X_last = 0;
-int16_t Y_now=0;
-int16_t Y_last=0;
-int16_t x_speed=0;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/

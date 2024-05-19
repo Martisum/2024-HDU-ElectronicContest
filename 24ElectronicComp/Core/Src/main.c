@@ -57,8 +57,12 @@ void menu_init(void);
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-int16_t sin_wave[MAX_DATALEN];//俯仰角数据缓存
-int16_t sincnt=0;//俯仰角数据缓存计数
+int16_t sin_wave[MAX_DATALEN];//sin数据缓存
+int16_t sincnt=0;//sin数据缓存计数
+int16_t squa_wave[MAX_DATALEN];//square数据缓存
+int16_t squacnt=0;//square数据缓存计数
+int16_t loca_wave[MAX_DATALEN];//location数据缓存
+int16_t locacnt=0;//location数据缓存计数
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -72,9 +76,9 @@ void SystemClock_Config(void);
 
 void sin_wave_gen(void)
 {
-  // uint8_t wave_index=0;
-  // uint8_t wave_i=0;
-
+  uint8_t wave_index=0;
+  uint8_t wave_i=0;
+  sincnt = 0;
   oled_clear();
   oled_show_string(0, 0, "sin_wave_gen()");
   HAL_TIM_Base_Start_IT(&htim10);
@@ -92,7 +96,8 @@ void sin_wave_gen(void)
       wave_index%=200;   
       for(uint8_t i=0;i<MAX_DATALEN;i++) 
       {
-        OLED_ClearPoint(i,sin_wave[i]*64/4095);
+        uint16_t Pwave = 64-(sin_wave[i]*64/4095);
+        OLED_ClearPoint(i,Pwave);
       }         
       if(sincnt < MAX_DATALEN)//sine数据保存
 			{
@@ -105,13 +110,20 @@ void sin_wave_gen(void)
 			}
     }
     for (uint8_t i = 0; i < MAX_DATALEN ; i++)
-				OLED_DrawPoint(i,sin_wave[i]*64/4095 );
+    {
+      uint16_t Pwave = 64-(sin_wave[i]*64/4095);
+      OLED_ClearPoint(i,Pwave);
+    }
     OLED_Refresh();
     HAL_Delay(1);
     if (ADCY > MAX_ADC_VAL) {
       HAL_Delay(KEY_DelayTime);
       if (ADCY > MAX_ADC_VAL) {
           global_wave_type=0;
+          for(uint8_t i=0;i<MAX_DATALEN;i++) 
+          {
+            sin_wave[i]=0;
+          }    
           HAL_TIM_Base_Stop_IT(&htim10);
           MenuRender(1);
           return;
@@ -122,6 +134,9 @@ void sin_wave_gen(void)
 
 void square_wave_gen(void)
 {
+  uint8_t wave_index=0;
+  uint8_t wave_i=0;
+  squacnt = 0;
   oled_clear();
   oled_show_string(0, 0, "square_wave_gen()");
   HAL_TIM_Base_Start_IT(&htim10);
@@ -130,13 +145,42 @@ void square_wave_gen(void)
   __HAL_TIM_SET_AUTORELOAD(&htim10, global_freq);
   while (1)
   {
-    oled_show_string(0,0,"sine_wave");
-    HAL_Delay(5);
-
+    wave_i++;
+    if(wave_i>=5/global_freq)
+    {
+      wave_i=0;
+      wave_index++;
+      wave_index%=200;   
+      for(uint8_t i=0;i<MAX_DATALEN;i++) 
+      {
+        uint16_t Swave = 64-(squa_wave[i]*64/4095);
+        OLED_ClearPoint(i,Swave);
+      }         
+      if(squacnt < MAX_DATALEN)//squa数据保存
+			{
+				squa_wave[squacnt++] = square[wave_index];
+			}
+			else
+			{
+				memcpy((void *)squa_wave, (void *)(squa_wave + 1), sizeof(squa_wave[0]) * (MAX_DATALEN - 1));
+				squa_wave[MAX_DATALEN - 1] = square[wave_index];
+			}
+    }
+    for (uint8_t i = 0; i < MAX_DATALEN ; i++)
+    {
+      uint16_t Swave = 64-(squa_wave[i]*64/4095);
+      OLED_ClearPoint(i,Swave);
+    }
+    OLED_Refresh();
+    HAL_Delay(1);
     if (ADCY > MAX_ADC_VAL) {
       HAL_Delay(KEY_DelayTime);
       if (ADCY > MAX_ADC_VAL) {
-        global_wave_type=0;
+          global_wave_type=0;
+          for(uint8_t i=0;i<MAX_DATALEN;i++) 
+          {
+            squa_wave[i]=0;
+          }    
           HAL_TIM_Base_Stop_IT(&htim10);
           MenuRender(1);
           return;
@@ -201,8 +245,7 @@ void speed_control(void)
         MenuRender(1);
         return;
       }
-    }
-    
+    }  
   }
 }
 
@@ -239,9 +282,56 @@ void location_control(void)
         return;
       }
     }
-    
   }
 }
+
+void location_wave(void)
+{
+  locacnt=0;
+  oled_clear();
+  oled_show_string(0, 0, "location_wave()");
+  HAL_TIM_Base_Start_IT(&htim7);
+  HAL_UARTEx_ReceiveToIdle_DMA(&huart3,rx_buf,127);	
+    
+  while (1)
+  {
+      for(uint8_t i=0;i<MAX_DATALEN;i++) 
+      {
+        uint16_t Lwave = 64-(loca_wave[i]*64/300);
+        OLED_ClearPoint(i,Lwave);
+      }         
+      if(locacnt < MAX_DATALEN)//loca_wave数据保存
+			{
+				loca_wave[locacnt++] = X_now;
+			}
+			else
+			{
+				memcpy((void *)loca_wave, (void *)(loca_wave + 1), sizeof(loca_wave[0]) * (MAX_DATALEN - 1));
+				loca_wave[MAX_DATALEN - 1] = X_now;
+			}
+    for (uint8_t i = 0; i < MAX_DATALEN ; i++)
+    {
+      uint16_t Lwave = 64-(loca_wave[i]*64/300);
+      OLED_ClearPoint(i,Lwave);
+    }
+    OLED_Refresh();
+    HAL_Delay(1);
+
+    if (ADCY > MAX_ADC_VAL) {
+      HAL_Delay(KEY_DelayTime);
+      if (ADCY > MAX_ADC_VAL) {
+        for(uint8_t i=0;i<MAX_DATALEN;i++) 
+        {
+          squa_wave[i]=0;
+        }    
+        HAL_TIM_Base_Stop_IT(&htim7);
+        MenuRender(1);
+        return;
+      }
+    }  
+  }
+}
+
 /* USER CODE END 0 */
 
 /**
